@@ -1,0 +1,31 @@
+
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.navbar {
+  background-color: #333;
+  color: white;
+  
+}
+
+.value {
+  flex: 1;
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+
+.positions {
+  background-color: #eee;
+  padding: 1rem;
+}
+
+.footer {
+  background-color: #333;
+  color: white;
+  padding: 1rem;
+}
