@@ -1,5 +1,6 @@
-import styles from '@/components/positions/positions.module.css';
-export default function Positions() {
+import styles from '@/components/stock/stock.module.css';
+
+export default function Stock(data: any) {
   const stockTicker = "AAPL"; // Example stock ticker
   const stockQuantity = 10; // Example quantity of stocks 
   const stockPrice = 150; // Example price per stock
@@ -20,4 +21,4 @@ export default function Positions() {
       
     </div>
   );
-}    
+} 
