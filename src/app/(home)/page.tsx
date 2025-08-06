@@ -1,14 +1,14 @@
 import Buy from '@/components/buy/buy';
 import Navbar from '@/components/navbar/navbar';
-
+import Positions from '@/components/positions/positions';
+import Value from '@/components/value/value';
+import PortfolioChart from '@/components/portfolioChart/portfolioChart';
 export default function Home() {
   return (
     <div>
-      
-      <h1>Welcome to the Stock Dashboard</h1>
-      <p>This is a simple stock dashboard application.</p>
-      <p>Positions and stock data will be displayed here.</p>
-      
+      <PortfolioChart />
+      <Value />
+      <Positions />
     </div>
   );
 }

@@ -1,4 +1,10 @@
+.container {
+    background-color: grey;
+}
+
 .links {
     display: flex;
     gap: 10px;
+    justify-content: center;
 }
+
