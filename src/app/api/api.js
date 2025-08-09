@@ -1,25 +1,18 @@
 import axios from "axios";
 
-import { restClient } from "@polygon.io/client-js";
+export default async function fetchStock() {
+    const options = {
+        method: "GET",
+        url: `https://api.marketstack.com/v1/eod?access_key=${process.env.NEXT_PUBLIC_MARKETSTACK_API_KEY}`,
+        params: {
+            symbols: "AAPL",
+        },
+    };
 
-export default function fetchStockData() {
-  const apiKey = process.env.POLYGON_API_KEY;
-  const rest = restClient(apikey, "https://api.polygon.io");
-
-  async function example_listTickers() {
     try {
-      const response = await rest.listTickers({
-        market: "stocks",
-        active: "true",
-        order: "asc",
-        limit: "100",
-        sort: "ticker",
-      });
-      console.log("Response:", response);
-    } catch (e) {
-      console.error("An error happened:", e);
+        const response = await axios.request(options);
+        console.log(response.data);
+    } catch (error) {
+        console.error(error);
     }
-  }
-
-  example_listTickers();
 }

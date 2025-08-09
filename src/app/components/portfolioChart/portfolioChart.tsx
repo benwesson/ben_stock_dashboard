@@ -1,4 +1,6 @@
 'use client';
+import styles from './portfolioChart.module.css';
+
 
 import Chart from 'chart.js/auto';
 import { useEffect, useRef } from 'react';

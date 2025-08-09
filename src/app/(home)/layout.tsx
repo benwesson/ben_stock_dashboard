@@ -30,8 +30,9 @@ export default function RootLayout({
         <div className={styles.container}>
           
 
-       
-          {children}
+          <div className={styles.main}>
+            {children}
+          </div>
         </div>
       </body>
     </html>
