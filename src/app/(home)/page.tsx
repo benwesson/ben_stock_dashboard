@@ -6,9 +6,12 @@ import PortfolioChart from '@/components/portfolioChart/portfolioChart';
 export default function Home() {
   return (
     <div>
-      <PortfolioChart />
-      <Value />
+      
+      
       <Positions />
+      
+
+
     </div>
   );
 }

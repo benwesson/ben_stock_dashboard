@@ -1,5 +1,7 @@
 .container {
     background-color: grey;
+    position: sticky;
+    top: 0;
 }
 
 .links {

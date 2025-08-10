@@ -1,4 +1,5 @@
 import styles from '@/components/positions/positions.module.css';
+import Link from 'next/link';
 export default function Positions() {
   const stockTicker = "AAPL"; // Example stock ticker
   const stockQuantity = 10; // Example quantity of stocks 
@@ -10,14 +11,10 @@ export default function Positions() {
     <div>
       <h2>Positions</h2>
       <p>List of stock positions will be displayed here.</p>
-      <div className={styles.stock}>
-        <p>Ticker: {stockTicker}</p>
-        <p>Quantity: {stockQuantity}</p>
-        <p>Price: {stockPrice} </p>
-        <p>Market Vlaue: {marketValue}</p>
-        <p>% of Holdings: {percentageOfHoldings}</p>
-      </div>
-      
+      <Link href="/trade">
+        <button>Add Stock</button>
+      </Link>
+
     </div>
   );
 }    
