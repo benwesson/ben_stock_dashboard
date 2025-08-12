@@ -6,7 +6,7 @@ import { fetchMultipleStocks } from '@/api/stock_api'; // Fixed import path - ad
 export default async function Positions() {
   let response;
   let stockPricesData = {};
-  let chartArray=[];
+  let chartData = {}; // Object to store closing prices arrays
   
   try {
     response = await findStocks(); 
@@ -17,16 +17,32 @@ export default async function Positions() {
       
       try {
         const multipleStockResponse = await fetchMultipleStocks(tickers);
+        stockPricesData = multipleStockResponse.data || {};
         
-        console.log(`Successfully fetched ${multipleStockResponse.successCount} stocks`);
-        
-        if (multipleStockResponse.errorCount > 0) {
-          console.warn(`Failed to fetch ${multipleStockResponse.errorCount} stocks:`, 
-                      multipleStockResponse.errors);
+        // Process each ticker to extract closing prices
+        for (const ticker of tickers) {
+          const stockData = stockPricesData[ticker];
+          
+          if (stockData?.data && Array.isArray(stockData.data)) {
+            // Create array of closing prices for this ticker
+            chartData[ticker] = stockData.data
+              .slice() // Copy array
+              .reverse() // Oldest to newest
+              .map(dataPoint => ({
+                close: dataPoint.close,
+                date: dataPoint.date,
+                // You can add more fields if needed later
+              }))
+              .map(item => item.close); // Extract just the closing price
+            
+            console.log(`${ticker}: ${chartData[ticker].length} closing prices extracted`);
+          } else {
+            chartData[ticker] = [];
+            console.warn(`No data available for ${ticker}`);
+          }
         }
         
-        // Ensure we have valid data
-        stockPricesData = multipleStockResponse.data || {};
+        console.log('Final chartData object:', chartData);
         
       } catch (error) {
         console.error('Error fetching stock data:', error);
@@ -72,7 +88,7 @@ export default async function Positions() {
         return (
           <div key={stock.ticker}>
             <h3>{stock.ticker}</h3>
-            <p>Latest Price: ${latestPrice.toFixed(2)}</p>
+            <p>Share Price: ${latestPrice.toFixed(2)}</p>
             <p>Shares: {stock.quantity}</p>
             <p>Total Value: ${(latestPrice * stock.quantity).toFixed(2)}</p>
             {/* <p>Data Points: {dataPoints}</p> */}
