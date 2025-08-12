@@ -8,8 +8,8 @@ export default function Home() {
     <div>
       
       
-      <Positions />
       
+      <Positions />
 
 
     </div>
