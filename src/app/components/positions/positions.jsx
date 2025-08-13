@@ -4,6 +4,7 @@ import { findStocks } from '@/api/prisma_api';
 import { fetchMultipleStocks } from '@/api/stock_api';
 import PortfolioChart from '@/components/portfolioChart/portfolioChart';
 
+
 export default async function Positions() {
   let response;
   let stockPricesData = {};
@@ -29,7 +30,6 @@ export default async function Positions() {
         // Process each ticker to extract closing prices
         for (const ticker of tickers) {
           const stockData = stockPricesData[ticker];
-          
           if (stockData?.data && Array.isArray(stockData.data)) {
             chartData[ticker] = stockData.data
               .slice()
@@ -115,6 +115,8 @@ export default async function Positions() {
           const latestHigh = stockData?.data?.[0]?.high;
           const latestLow = stockData?.data?.[0]?.low;
           
+          
+          
           // Calculate day change
           const dayChange = latestOpen ? ((latestPrice - latestOpen) / latestOpen * 100) : 0;
           
@@ -142,7 +144,7 @@ export default async function Positions() {
               {stockData?.data?.[0] && (
                 <div style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
                   <p>Open: ${latestOpen?.toFixed(2)} | High: ${latestHigh?.toFixed(2)} | Low: ${latestLow?.toFixed(2)}</p>
-                  <p>Data Points: {dataPoints}</p>
+                  <p>Data Points: {dataPoints}</p><button><Link href="/trade">Sell Stock</Link></button>
                 </div>
               )}
             </div>
