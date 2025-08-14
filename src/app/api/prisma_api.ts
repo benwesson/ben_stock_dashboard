@@ -51,11 +51,28 @@ export async function findStocks(){
     return stocks;
 }
 
-export async function deleteStock(ticker:string){
+export async function sellStock(ticker:string, quantity: number ){
+    await prisma.stock.update({
+        where: {
+            ticker:ticker,
+        },
+        data: {
+            quantity:quantity,
+            
+        }
+
+        
+        
+    })
+}
+
+export async function deleteStock(ticker:string ){
     await prisma.stock.delete({
         where: {
             ticker:ticker,
-        }
+        },
+        
+
         
         
     })
