@@ -6,12 +6,12 @@ export default function TradePage() {
     <div>
       <div className={styles.trade_container}>
        
-        <div className={styles.buy}> 
+       
           <Buy />
-        </div> 
-        <div className={styles.sell}>
+       
+       
            <Sell />
-        </div>
+     
        
       </div>
     </div>

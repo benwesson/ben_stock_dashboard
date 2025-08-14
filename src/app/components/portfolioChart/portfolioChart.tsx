@@ -1,12 +1,14 @@
 "use client";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { Chart } from 'chart.js/auto';
 
 export default function PortfolioChart({ chartData, stockQuantities }) {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
+  const containerRef = useRef(null);
+  const resizeTimeoutRef = useRef(null);
 
-  useEffect(() => {
+  const createChart = useCallback(() => {
     if (chartRef.current && chartData && Object.keys(chartData).length > 0) {
       // Destroy existing chart if it exists
       if (chartInstance.current) {
@@ -59,31 +61,11 @@ export default function PortfolioChart({ chartData, stockQuantities }) {
               tension: 0.1,
               fill: true,
             },
-            // Individual stock contributions
-            ...tickers.map((ticker, index) => {
-              const colors = [
-                'rgb(255, 99, 132)',
-                'rgb(54, 162, 235)', 
-                'rgb(255, 205, 86)',
-                'rgb(153, 102, 255)'
-              ];
-              
-              const stockValues = chartData[ticker].map(price => 
-                price * (stockQuantities[ticker] || 0)
-              );
-              
-              return {
-                label: `${ticker} Value`,
-                data: stockValues,
-                borderColor: colors[index % colors.length],
-                backgroundColor: colors[index % colors.length] + '20',
-                tension: 0.1,
-              };
-            })
           ],
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false, // Key: allows chart to fill container
           plugins: {
             title: {
               display: true,
@@ -125,25 +107,53 @@ export default function PortfolioChart({ chartData, stockQuantities }) {
               },
             },
           },
-          interaction: {
-            mode: 'nearest',
-            axis: 'x',
-            intersect: false
-          },
         },
       });
     }
+  }, [chartData, stockQuantities]);
 
-    // Cleanup function
+  useEffect(() => {
+    createChart();
+
+    const resizeObserver = new ResizeObserver(() => {
+      // Clear existing timeout
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+
+      // Debounce the resize and force recreation
+      resizeTimeoutRef.current = setTimeout(() => {
+        if (chartInstance.current) {
+          chartInstance.current.destroy();
+          createChart();
+        }
+      }, 300); // Wait 300ms after resize stops
+    });
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy();
       }
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+      resizeObserver.disconnect();
     };
-  }, [chartData, stockQuantities]);
+  }, [createChart]);
 
   return (
-    <div style={{ width: '100%', height: '400px', marginBottom: '20px' }}>
+    <div 
+      ref={containerRef}
+      style={{ 
+        width: '100%', 
+        height: '400px',
+        position: 'relative' 
+      }}
+    >
       <canvas ref={chartRef}></canvas>
     </div>
   );

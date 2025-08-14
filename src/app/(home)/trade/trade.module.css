@@ -1,16 +1,9 @@
 .trade_container {
+    margin-top: 50px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-    grid-template-areas:
-        "buy"
-        "sell";
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap:16px;
+
+   
 }
 
-.buy {
-    grid-area: buy;
-} 
-
-.sell {
-    grid-area: sell;
-}

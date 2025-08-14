@@ -29,7 +29,7 @@ const handleSell = async (e: FormEvent<HTMLFormElement>) => {
 function SellStats({ stock }: { stock: Stock }) {
   return (
     <form onSubmit={handleSell}>
-      <div id="sellTicker">Sell Stats for </div>
+     
       <input type="hidden" name="sellTicker" value={stock.ticker}></input>
       <p>Quantity Owned: {stock.quantity}</p>
       <input type="hidden" name="ownedQuantity" value={stock.quantity}></input>
@@ -61,23 +61,25 @@ export default function SellForm({ stocks }: { stocks: Stock[] }) {
   const selectedStock = stocksByTicker[selectedTicker];
 
   return (
-    <div className={styles.sell}>
-      <div>Sell Stocks</div>
+    <div className={styles.sellContainer}>
+      <div className={styles.sell}>
+        <div>Sell Stocks</div>
 
-      <label htmlFor="ticker">Select Ticker:</label>
-      <select
-        id="ticker"
-        value={selectedTicker}
-        onChange={(e) => setSelectedTicker(e.target.value)}
-      >
-        {stocks.map((s) => (
-          <option key={s.ticker} value={s.ticker}>
-            {s.ticker}
-          </option>
-        ))}
-      </select>
+        <label htmlFor="ticker">Select Ticker:</label>
+        <select
+          id="ticker"
+          value={selectedTicker}
+          onChange={(e) => setSelectedTicker(e.target.value)}
+        >
+          {stocks.map((s) => (
+            <option key={s.ticker} value={s.ticker}>
+              {s.ticker}
+            </option>
+          ))}
+        </select>
 
-      {selectedStock && <SellStats stock={selectedStock} />}
+        {selectedStock && <SellStats stock={selectedStock} />}
+      </div>
     </div>
   );
 }

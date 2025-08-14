@@ -53,7 +53,7 @@ export default async function Positions() {
   } catch (error) {
     console.error("Error fetching stocks from database:", error);
     return (
-      <div>
+      <div className={styles.portfolioSum}>
         <h2>Positions</h2>
         <p>Error loading stock positions.</p>
       </div>
@@ -62,7 +62,7 @@ export default async function Positions() {
 
   if (!response || response.length === 0) {
     return (
-      <div>
+      <div className={styles.portfolioSum}>
         <h2>Positions</h2>
         <p>No stock positions found.</p>
       </div>
@@ -78,17 +78,8 @@ export default async function Positions() {
 
   return (
     <div>
-      <h2>Positions</h2>
-
       {/* Portfolio Summary */}
-      <div
-        style={{
-          marginBottom: "30px",
-          padding: "20px",
-          backgroundColor: "#f5f5f5",
-          borderRadius: "8px",
-        }}
-      >
+      <div className={styles.portfolioSum}>
         <h3>Portfolio Summary</h3>
         <p>Total Stocks: {response.length}</p>
         <p>
@@ -99,30 +90,18 @@ export default async function Positions() {
 
       {/* Portfolio Chart */}
       {Object.keys(chartData).length > 0 && (
-        <div
-          style={{
-            marginBottom: "30px",
-            padding: "20px",
-            backgroundColor: "white",
-            borderRadius: "8px",
-            border: "1px solid #ddd",
-          }}
-        >
-          <PortfolioChart
-            chartData={chartData}
-            stockQuantities={stockQuantities}
-          />
+        <div className={styles.chartContainer}>
+          <div className={styles.chart}>
+            <PortfolioChart
+              chartData={chartData}
+              stockQuantities={stockQuantities}
+            />
+          </div>
         </div>
       )}
 
       {/* Individual Stock Details */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "20px",
-        }}
-      >
+      <div className={styles.stockGrid}>
         {response.map((stock) => {
           const stockData = stockPricesData[stock.ticker] || {};
           const latestPrice = stockData?.data?.[0]?.close || stock.price || 0;
@@ -137,15 +116,7 @@ export default async function Positions() {
             : 0;
 
           return (
-            <div
-              key={stock.ticker}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                padding: "15px",
-                backgroundColor: "white",
-              }}
-            >
+            <div className={styles.stock} key={stock.ticker}>
               <h3>{stock.ticker}</h3>
               <p
                 style={{

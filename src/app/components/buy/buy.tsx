@@ -1,8 +1,8 @@
 "use client";
-import { createStock, findTicker, updateStock } from "@/api/prisma_api"; // Fixed import path
+import { createStock, findTicker, updateStock } from "@/api/prisma_api"; 
 import { useState } from "react";
 import styles from "@/components/buy/buy.module.css";
-import { fetchStock } from "@/api/stock_api"; // Fixed import path
+import { fetchStock } from "@/api/stock_api"; 
 import { FormEvent } from "react";
 
 export default function Buy() {
@@ -20,7 +20,6 @@ export default function Buy() {
     
     try {
       
-     
       console.log("Fetching stock data for:", ticker);
       const response = await fetchStock(ticker);
       console.log("Full response:", response);
@@ -29,7 +28,7 @@ export default function Buy() {
       if (response && response.data && response.data.length > 0) {
         const stockData = response.data[0]; // MarketStack uses 'data' not 'results'
         
-        // MarketStack API fields
+        // MarketSt   ack API fields
         const currentPrice = stockData.close 
         setPrice(currentPrice);
         
@@ -97,6 +96,7 @@ export default function Buy() {
 
   return (
     <div className={styles.buy}>
+      <div>Buy Stocks</div>
       <form onSubmit={handleSearch}>
         <input
           type="text"
@@ -117,20 +117,20 @@ export default function Buy() {
       )}
       
       <div>
-        <h2>Buy Stocks</h2>
+        
         
         <form
           className={styles.buyForm}
-          style={{ display: showBuyForm ? "block" : "none" }}
+          // style={{ display: showBuyForm ? "block" : "none" }}
           onSubmit={handleBuy}
         >
           <label>
-            Stock Ticker:
-            <div>{ticker}</div>
+           
+            <div> Stock Ticker:{ticker}</div>
           </label> 
           <label>
-            Current Price:
-            <div>{price}</div>
+           
+            <div> Current Price:{price}</div>
           </label> 
           <label>
             Quantity:

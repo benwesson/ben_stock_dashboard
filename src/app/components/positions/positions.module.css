@@ -1,5 +1,47 @@
-.stock {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+.portfolioSum{
+    background-color: white;
+    border: solid 1px #ddd;
+    border-radius:10px;
+    padding: 10px;
+    padding: "20px";
+    margin-bottom:30px;
+    margin-top:30px;
+    
+}
+
+.stockGrid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+     gap:16px;
+
+} 
+
+.stock{
+    border: solid 1px #ddd;
+    border-radius:10px;
+    padding: 10px;
+    background-color: white;
+    margin-top: 20px;
+   
+
+}
+
+.chart {
+    border: solid 1px #ddd;
+    border-radius:10px;
+    padding: 10px;
+    background-color: white;
+    width: 100%;
+    aspect-ratio: 16 / 9; /* Maintains 16:9 ratio */
+    position: relative;
+
+}
+
+
+.chartContainer {
+    display: grid;
+    width: 100%;
+    grid-column: 1 / -1; /* Span full width of parent grid */
+    margin-bottom: 30px;
+   
 }
