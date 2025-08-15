@@ -6,9 +6,9 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  Legend, 
   ResponsiveContainer 
 } from 'recharts';
+import { useState } from 'react';
 
 interface PortfolioChartProps {
   chartData: { [ticker: string]: number[] };
@@ -16,6 +16,8 @@ interface PortfolioChartProps {
 }
 
 export default function PortfolioChart({ chartData, stockQuantities }: PortfolioChartProps) {
+  const [visibleLines, setVisibleLines] = useState<Set<string>>(new Set(['totalPortfolio', ...Object.keys(chartData || {})]));
+
   if (!chartData || Object.keys(chartData).length === 0) {
     return (
       <div className="chart-container">
@@ -42,27 +44,14 @@ export default function PortfolioChart({ chartData, stockQuantities }: Portfolio
     
     for (let i = 0; i < remainingCount; i++) {
       const hue = (i * 360 / remainingCount) % 360;
-      const saturation = 60 + (i % 3) * 15; // Vary saturation between 60-90%
-      const lightness = 50 + (i % 2) * 20;  // Vary lightness between 50-70%
+      const saturation = 60 + (i % 3) * 15;
+      const lightness = 50 + (i % 2) * 20;
       colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
     }
     
     return colors;
   };
 
-  // Alternative: Use a color library approach
-  const generateColorsAlternative = (count: number) => {
-    const colors = [];
-    for (let i = 0; i < count; i++) {
-      const hue = (i * 137.508) % 360; // Golden angle approximation for good distribution
-      const saturation = 70 + (i % 3) * 10; // 70%, 80%, 90%
-      const lightness = 45 + (i % 2) * 15;  // 45%, 60%
-      colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
-    }
-    return colors;
-  };
-
-  // Use the dynamic color generation
   const colors = generateColors(tickers.length);
 
   // Prepare data for Recharts
@@ -96,13 +85,36 @@ export default function PortfolioChart({ chartData, stockQuantities }: Portfolio
     chartDataFormatted.push(dayData);
   }
 
+  // Legend interaction functions
+  const toggleLine = (lineKey: string) => {
+    setVisibleLines(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(lineKey)) {
+        newSet.delete(lineKey);
+      } else {
+        newSet.add(lineKey);
+      }
+      return newSet;
+    });
+  };
+
+  const showOnlyStock = (ticker: string) => {
+    setVisibleLines(new Set([ticker]));
+  };
+
+  const showAll = () => {
+    setVisibleLines(new Set(['totalPortfolio', ...tickers]));
+  };
+
   // Custom tooltip formatter
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
+      const visiblePayload = payload.filter((entry: any) => visibleLines.has(entry.dataKey));
+      
       return (
         <div className="chart-tooltip">
           <p style={{ margin: '0 0 5px 0', fontWeight: 'bold' }}>{label}</p>
-          {payload.map((entry: any, index: number) => (
+          {visiblePayload.map((entry: any, index: number) => (
             <p key={index} style={{ margin: '2px 0', color: entry.color }}>
               {`${entry.dataKey === 'totalPortfolio' ? 'Total Portfolio' : entry.dataKey}: $${entry.value.toLocaleString(undefined, {
                 minimumFractionDigits: 0,
@@ -117,56 +129,153 @@ export default function PortfolioChart({ chartData, stockQuantities }: Portfolio
   };
 
   return (
-    <div className="chart-container">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={chartDataFormatted}
-          margin={{ top: 10, right: 15, left: 5, bottom: 10 }}
+    <div>
+      {/* Interactive Legend Buttons */}
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '8px',
+        justifyContent: 'center',
+        padding: '15px 10px',
+        marginBottom: '10px',
+        borderBottom: '1px solid #e0e0e0'
+      }}>
+        <button 
+          onClick={showAll}
+          style={{
+            padding: '6px 12px',
+            border: '2px solid #666',
+            borderRadius: '20px',
+            background: '#f8f9fa',
+            color: '#666',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: '500',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#e9ecef';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#f8f9fa';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-          <XAxis 
-            dataKey="date" 
-            stroke="#666"
-            fontSize={11}
-            interval="preserveStartEnd"
-          />
-          <YAxis 
-            stroke="#666"
-            fontSize={11}
-            tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-            width={45}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend />
-          
-          {/* Main portfolio line - thick and prominent */}
-          <Line 
-            type="monotone" 
-            dataKey="totalPortfolio" 
-            stroke="#2563eb"
-            strokeWidth={3}
-            name="Total Portfolio"
-            dot={false}
-            activeDot={{ r: 5, stroke: '#2563eb', strokeWidth: 2 }}
-          />
-          
-          {/* Individual stock lines with dynamic colors */}
-          {tickers.map((ticker, index) => (
-            <Line 
-              key={ticker}
-              type="monotone" 
-              dataKey={ticker} 
-              stroke={colors[index]} // Use dynamic color
-              strokeWidth={2}
-              name={`${ticker}`}
-              dot={false}
-              strokeDasharray="5 5"
-              activeDot={{ r: 3, stroke: colors[index], strokeWidth: 1 }}
+          Show All
+        </button>
+        
+        <button
+          onClick={() => toggleLine('totalPortfolio')}
+          style={{
+            padding: '6px 12px',
+            border: '2px solid #2563eb',
+            borderRadius: '20px',
+            background: visibleLines.has('totalPortfolio') ? 'rgba(37, 99, 235, 0.1)' : 'white',
+            color: visibleLines.has('totalPortfolio') ? '#2563eb' : '#999',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: visibleLines.has('totalPortfolio') ? '600' : '500',
+            opacity: visibleLines.has('totalPortfolio') ? 1 : 0.6,
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          Total Portfolio
+        </button>
+        
+        {tickers.map((ticker, index) => (
+          <button
+            key={ticker}
+            onClick={() => showOnlyStock(ticker)}
+            style={{
+              padding: '6px 12px',
+              border: `2px solid ${colors[index]}`,
+              borderRadius: '20px',
+              background: visibleLines.has(ticker) ? `${colors[index]}20` : 'white',
+              color: visibleLines.has(ticker) ? colors[index] : '#999',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: visibleLines.has(ticker) ? '600' : '500',
+              opacity: visibleLines.has(ticker) ? 1 : 0.6,
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            {ticker}
+          </button>
+        ))}
+      </div>
+
+      {/* Chart Container - Keeping your working structure */}
+      <div className="chart-container">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={chartDataFormatted}
+            margin={{ top: 10, right: 15, left: 5, bottom: 10 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis 
+              dataKey="date" 
+              stroke="#666"
+              fontSize={11}
+              interval="preserveStartEnd"
             />
-          ))}
-        </LineChart>
-      </ResponsiveContainer>
-      
+            <YAxis 
+              stroke="#666"
+              fontSize={11}
+              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              width={45}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            
+            {/* Main portfolio line */}
+            {visibleLines.has('totalPortfolio') && (
+              <Line 
+                type="monotone" 
+                dataKey="totalPortfolio" 
+                stroke="#2563eb"
+                strokeWidth={3}
+                name="Total Portfolio"
+                dot={false}
+                activeDot={{ r: 5, stroke: '#2563eb', strokeWidth: 2 }}
+              />
+            )}
+            
+            {/* Individual stock lines */}
+            {tickers.map((ticker, index) => (
+              visibleLines.has(ticker) && (
+                <Line 
+                  key={ticker}
+                  type="monotone" 
+                  dataKey={ticker} 
+                  stroke={colors[index]}
+                  strokeWidth={2}
+                  name={ticker}
+                  dot={false}
+                  strokeDasharray="5 5"
+                  activeDot={{ r: 3, stroke: colors[index], strokeWidth: 1 }}
+                />
+              )
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
       <style jsx>{`
         .chart-container {
           width: 100%;
