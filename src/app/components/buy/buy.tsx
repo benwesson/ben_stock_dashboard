@@ -57,7 +57,7 @@ export default function Buy() {
   };
 
   const handleBuy = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
-    //e.preventDefault();
+    e.preventDefault();
     //rules about onChange and numbers so we can use the formData
     const formData = new FormData(e.currentTarget);
     const buyQuantity = Number(formData.get("quantity"));

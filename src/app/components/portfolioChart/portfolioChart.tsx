@@ -1,4 +1,5 @@
 "use client";
+import styles from './portfolioChart.module.css';
 import { 
   LineChart, 
   Line, 
@@ -20,7 +21,7 @@ export default function PortfolioChart({ chartData, stockQuantities }: Portfolio
 
   if (!chartData || Object.keys(chartData).length === 0) {
     return (
-      <div className="chart-container">
+      <div className={styles.chart_container}>
         <p>No chart data available</p>
       </div>
     );
@@ -112,7 +113,7 @@ export default function PortfolioChart({ chartData, stockQuantities }: Portfolio
       const visiblePayload = payload.filter((entry: any) => visibleLines.has(entry.dataKey));
       
       return (
-        <div className="chart-tooltip">
+        <div className={styles.chart_tooltip}>
           <p style={{ margin: '0 0 5px 0', fontWeight: 'bold' }}>{label}</p>
           {visiblePayload.map((entry: any, index: number) => (
             <p key={index} style={{ margin: '2px 0', color: entry.color }}>
@@ -221,8 +222,8 @@ export default function PortfolioChart({ chartData, stockQuantities }: Portfolio
         ))}
       </div>
 
-      {/* Chart Container - Keeping your working structure */}
-      <div className="chart-container">
+      {/* Chart Container -  */}
+      <div className={styles.chart_container}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartDataFormatted}
@@ -276,39 +277,7 @@ export default function PortfolioChart({ chartData, stockQuantities }: Portfolio
         </ResponsiveContainer>
       </div>
 
-      <style jsx>{`
-        .chart-container {
-          width: 100%;
-          height: 250px;
-        }
-        
-        .chart-tooltip {
-          background-color: white;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          padding: 8px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-          font-size: 12px;
-          max-width: 200px;
-        }
-        
-        @media (min-width: 768px) {
-          .chart-container {
-            height: 350px;
-          }
-          .chart-tooltip {
-            font-size: 14px;
-            padding: 10px;
-            max-width: 250px;
-          }
-        }
-        
-        @media (min-width: 1024px) {
-          .chart-container {
-            height: 400px;
-          }
-        }
-      `}</style>
+     
     </div>
   );
 }
