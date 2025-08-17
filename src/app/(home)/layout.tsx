@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import {Source_Sans_3 } from "next/font/google";
+import { Source_Sans_3 } from "next/font/google";
 import "../globals.css";
 import styles from "./home.module.css";
 import Navbar from "@/components/navbar/navbar";
-
+import AuthProvider from "@/providers/AuthProvider";
 const sourceSans3 = Source_Sans_3({
   subsets: ["latin"],
   display: "swap", // or 'fallback', 'optional', 'block'
@@ -21,15 +21,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={sourceSans3.className} >
-        <Navbar />
-        <div className={styles.container}>
-          
-
-          <div className={styles.main}>
-            {children}
+      <body className={sourceSans3.className}>
+        <AuthProvider>
+          <Navbar />
+          <div className={styles.container}>
+            <div className={styles.main}>{children}</div>
           </div>
-        </div>
+        </AuthProvider>
       </body>
     </html>
   );
