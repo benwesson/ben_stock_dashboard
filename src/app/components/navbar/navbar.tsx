@@ -3,9 +3,9 @@ import Link from 'next/link';
 import AuthLink from "@/components/authlink/authlink";
 export default function Navbar() {
   return (
-    <div >
-      
-      <div >
+    <div className={styles.container}>
+
+      <div className={styles.links} >
         <div><Link href="/">Account</Link></div>
         <div><Link href="/trade">Trade</Link></div>
         <div><AuthLink /></div>
