@@ -66,6 +66,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   Stock         Stock[]
+  funds         Decimal @default(0)
 
   @@map("users")
 }

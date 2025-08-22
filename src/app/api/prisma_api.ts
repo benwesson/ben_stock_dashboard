@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/utils/prisma";
-
+import { Prisma } from "@prisma/client";
 export async function createStock(ticker: string, quantity: number, price: number, userEmail: string) {
   await prisma.stock.create({
     data: { ticker: ticker.toUpperCase(), quantity, price, userEmail },
@@ -37,4 +37,19 @@ export async function deleteStock(ticker: string, userEmail: string) {
   await prisma.stock.delete({
     where: { ticker: ticker.toUpperCase(), userEmail: userEmail },
   });
+}
+
+export async function addFunds(email: string, funds: number) {
+  await prisma.user.update({
+    where: { email: email },
+    data: { funds: new Prisma.Decimal(funds) },
+  });
+} 
+
+export async function getFunds(email: string) {
+  const user = await prisma.user.findUnique({
+    where: { email: email },
+    select: { funds: true },
+  });
+  return user?.funds || 0;
 }
