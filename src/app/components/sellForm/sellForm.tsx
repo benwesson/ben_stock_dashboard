@@ -56,7 +56,7 @@ export default function SellForm({ email, stocks, funds }: SellFormProps) {
       <p>Signed in as: {email}</p>
       <h1>Choose Stock</h1>
       <form onSubmit={handleSell}>
-        <select name="ticker" onChange={(e) => handleSelect(e)} >
+        <select name="ticker" onChange={(e) => handleSelect(e)} required>
           <option value="">Select a stock to sell</option>
           {stocks.map((stock) => (
             <option key={stock.ticker} value={stock.ticker}>
