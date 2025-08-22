@@ -7,7 +7,8 @@ export default function Navbar() {
 
       <div className={styles.links} >
         <div><Link href="/">Account</Link></div>
-        <div><Link href="/trade">Trade</Link></div>
+        <div><Link href="/buy">Buy</Link></div>
+        <div><Link href="/sell">Sell</Link></div>
         <div><AuthLink /></div>
       </div>
     </div>
