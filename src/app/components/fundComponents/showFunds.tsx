@@ -7,7 +7,7 @@ type FundProps = {
 
 export default async function ShowFunds({ email, funds }: FundProps) {
     try {
-        return <div> Current funds: {funds}</div>;
+        return <div> Current funds: ${funds.toFixed(2)}</div>;
     } catch (error) {
         console.error("Error fetching funds:", error);
         return <div>Error fetching funds for: {email}</div>;
