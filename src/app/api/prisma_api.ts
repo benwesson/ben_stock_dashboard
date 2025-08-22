@@ -17,7 +17,7 @@ export async function findTicker(ticker: string, userEmail: string) {
 
 export async function updateStock(ticker: string, quantity: number,  userEmail: string) {
   // updates all rows with this ticker
-  await prisma.stock.update({
+  await prisma.stock.updateMany({
     where: { ticker: ticker.toUpperCase(), userEmail:userEmail},
     data: { quantity,  userEmail },
   });
@@ -34,7 +34,7 @@ export async function findStocks(userEmail: string) {
 
 
 export async function deleteStock(ticker: string, userEmail: string) {
-  await prisma.stock.delete({
+  await prisma.stock.deleteMany({
     where: { ticker: ticker.toUpperCase(), userEmail: userEmail },
   });
 }
@@ -42,7 +42,7 @@ export async function deleteStock(ticker: string, userEmail: string) {
 export async function addFunds(email: string, funds: number) {
   await prisma.user.update({
     where: { email: email },
-    data: { funds: new Prisma.Decimal(funds) },
+    data: { funds },
   });
 } 
 
