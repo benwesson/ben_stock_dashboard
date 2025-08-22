@@ -9,12 +9,12 @@ import {
   getFunds,
 } from "@/api/prisma_api";
 import { useState } from "react";
-type email = { email: string };
-export default function BuyForm({ email }: email) {
+type BuyFormProps = { email: string; funds: number };
+export default function BuyForm({ email, funds }: BuyFormProps) {
   const [stockTicker, setStockTicker] = useState<string>("none");
   const [stockPrice, setStockPrice] = useState<number>(0);
   const [ownedStocks, setOwnedStocks] = useState<number>(0);
-  const [currentFunds, setCurrentFunds] = useState<number>(0);
+  
   const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
     //Get ticker from input in form
     const formData = new FormData(event.currentTarget);
@@ -23,11 +23,7 @@ export default function BuyForm({ email }: email) {
     event.preventDefault();
 
     try {
-      //fetch current balance
-      const funds = await getFunds(email);
-      const managedFunds = Number(funds.toFixed(2));
-      setCurrentFunds(managedFunds);
-
+     
       //fetch stock from marketstack
       const stock = await fetchStock(formTicker);
       //Check if you own the stock
@@ -55,8 +51,8 @@ export default function BuyForm({ email }: email) {
       const newQuantity = ownedStocks + formQuantity;
 
       try {
-        const newFunds = currentFunds - formQuantity * stockPrice;
-        if (newFunds > currentFunds) {
+        const newFunds = funds - formQuantity * stockPrice;
+        if (newFunds > funds) {
           alert("Insufficient funds");
         } else {
           await updateStock(stockTicker, newQuantity, email);
@@ -76,10 +72,9 @@ export default function BuyForm({ email }: email) {
     //If you don't own the stock
     else {
       try {
-        const newFunds = currentFunds - formQuantity * stockPrice;
-        
-        
-        if (newFunds > currentFunds) {
+        const newFunds = funds - formQuantity * stockPrice;
+
+        if (newFunds > funds) {
           alert("Insufficient funds");
           
         }else {

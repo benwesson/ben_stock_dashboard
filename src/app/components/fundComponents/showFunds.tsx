@@ -1,15 +1,13 @@
 
-import { getFunds } from "@/api/prisma_api";
-
-type FundFormProps = {
+type FundProps = {
   email: string;
+  funds: number;
 };
 
 
-export default async function ShowFunds({ email }: FundFormProps) {
+export default async function ShowFunds({ email, funds }: FundProps) {
     try {
-        const funds = await getFunds(email);
-        return <div> Current funds: {funds.toFixed(2)}</div>;
+        return <div> Current funds: {funds}</div>;
     } catch (error) {
         console.error("Error fetching funds:", error);
         return <div>Error fetching funds for: {email}</div>;
