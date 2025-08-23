@@ -1,6 +1,6 @@
 "use client";
 import { fetchStock } from "@/api/stock_api";
-
+import { Button, Input } from "@chakra-ui/react";
 import {
   createStock,
   findTicker,
@@ -99,8 +99,8 @@ export default function BuyForm({ email, funds }: BuyFormProps) {
       <p>Signed in as: {email}</p>
       <h1>Search for Stocks</h1>
       <form onSubmit={handleSearch}>
-        <input type="text" placeholder="Ticker" name="ticker" />
-        <button type="submit">Search</button>
+        <Input type="text" placeholder="Ticker" name="ticker" />
+        <Button type="submit">Search</Button>
       </form>
 
       <form onSubmit={handleBuy}>
@@ -108,8 +108,8 @@ export default function BuyForm({ email, funds }: BuyFormProps) {
         <div>Currently Owned Shares: {ownedStocks}</div>
         <div>Ticker: {stockTicker}</div>
         <div>Price: {stockPrice}</div>
-        <input type="number" placeholder="Quantity" name="quantity" />
-        <button type="submit">Buy</button>
+        <Input type="number" placeholder="Quantity" name="quantity" />
+        <Button type="submit">Buy</Button>
       </form>
     </div>
   );

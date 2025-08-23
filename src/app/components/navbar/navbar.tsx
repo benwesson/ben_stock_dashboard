@@ -1,6 +1,7 @@
 import Link from 'next/link';
  import styles from "@/components/navbar/navbar.module.css";
 import AuthLink from "@/components/authlink/authlink";
+import DarkMode from "@/components/darkMode/darkMode";
 export default function Navbar() {
   return (
     <div className={styles.container}>
@@ -11,7 +12,10 @@ export default function Navbar() {
         <div><Link href="/buy">Buy</Link></div>
         <div><Link href="/sell">Sell</Link></div>
         <div><AuthLink /></div>
+        <div><DarkMode /></div>
       </div>
     </div>
   );
 } 
+
+

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Source_Sans_3 } from "next/font/google";
-import "../globals.css";
+import "@/globals.css";
 import styles from "./home.module.css";
 import Navbar from "@/components/navbar/navbar";
 import AuthProvider from "@/providers/AuthProvider";
+import { Provider } from "@/components/chakraComponets/ui/provider"
 const sourceSans3 = Source_Sans_3({
   subsets: ["latin"],
   display: "swap", // or 'fallback', 'optional', 'block'
@@ -20,13 +21,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={sourceSans3.className}>
         <AuthProvider>
-          <Navbar />
-          <div className={styles.container}>
-            <div className={styles.main}>{children}</div>
-          </div>
+          <Provider>
+            <Navbar />
+            <div className={styles.container}>
+              <div className={styles.main}>{children}</div>
+            </div>
+          </Provider>
         </AuthProvider>
       </body>
     </html>

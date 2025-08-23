@@ -1,6 +1,8 @@
 "use client";
+
+import { Table } from "@/components/ui/table";
 import { addFunds } from "@/api/prisma_api";
-import { useState } from "react";
+import { Button, Input, Form } from "@chakra-ui/react"
 type FundFormProps = {
   email: string;
 };
@@ -24,10 +26,12 @@ export default function FundForm({ email }: FundFormProps) {
     <div>
       <p>Signed in as: {email}</p>
       <form onSubmit={handleSubmit}>
+        
         <h1>Fund Your Account</h1>
-        <input type="number" placeholder="Amount" name="quantity" required />
-        <button type="submit">Submit</button>
-        </form>
+        <Input type="number" placeholder="Amount" name="quantity" required />
+        <Button type="submit">Add Funds</Button>
+
+      </form>
     </div>
   );
 }

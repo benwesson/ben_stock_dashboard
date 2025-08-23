@@ -1,18 +1,22 @@
 "use client";
 import { useState } from "react";
 import { updateStock, deleteStock, addFunds } from "@/api/prisma_api";
+import { Button, Input, } from "@chakra-ui/react";
+
 type Stock = { ticker: string; quantity: number; price: number };
 
 type SellFormProps = {
   email: string;
   stocks: Stock[];
   funds: number;
+  stockPrices: { [key: string]: number }
 };
 
-export default function SellForm({ email, stocks, funds }: SellFormProps) {
-    const [selectedTicker, setSelectedTicker] = useState<string>("none");
-    const [selectedQuantity, setSelectedQuantity] = useState<number>(0);
-    const [selectedPrice, setSelectedPrice] = useState<number>(0);
+export default function SellForm({ email, stocks, funds, stockPrices }: SellFormProps) {
+
+  const [selectedTicker, setSelectedTicker] = useState<string>("none");
+  const [selectedQuantity, setSelectedQuantity] = useState<number>(0);
+  const [selectedPrice, setSelectedPrice] = useState<number>(0);
 
     const handleSell = async (event: React.FormEvent<HTMLFormElement>) => {
       
@@ -45,7 +49,7 @@ export default function SellForm({ email, stocks, funds }: SellFormProps) {
     const handleSelect = async (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedStock = stocks.find(stock => stock.ticker === event.target.value);
         if (selectedStock) {
-            setSelectedTicker(selectedStock.ticker);
+            setSelectedTicker(selectedStock.ticker.toUpperCase());
             setSelectedQuantity(selectedStock.quantity);
             setSelectedPrice(selectedStock.price);
         }
@@ -68,9 +72,10 @@ export default function SellForm({ email, stocks, funds }: SellFormProps) {
         <div>Ticker: {selectedTicker}</div>
         <div>Owned Quantity: {selectedQuantity}</div>
         <div>Bought At: {selectedPrice}</div>
+        <div>Current Price: {stockPrices[selectedTicker]?.data[0]?.close || 'N/A'}</div>
 
-        <input type="number" placeholder="Quantity" name="sellQuantity" min={1} max={selectedQuantity} required/>
-        <button type="submit">Sell</button>
+        <Input type="number" placeholder="Quantity" name="sellQuantity" min={1} max={selectedQuantity} required/>
+        <Button type="submit">Sell</Button>
       </form>
     </div>
   );
