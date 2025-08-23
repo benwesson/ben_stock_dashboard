@@ -99,7 +99,7 @@ export default function BuyForm({ email, funds }: BuyFormProps) {
       <p>Signed in as: {email}</p>
       <h1>Search for Stocks</h1>
       <form onSubmit={handleSearch}>
-        <Input type="text" placeholder="Ticker" name="ticker" />
+        <Input type="text" placeholder="Ticker" name="ticker" required />
         <Button type="submit">Search</Button>
       </form>
 

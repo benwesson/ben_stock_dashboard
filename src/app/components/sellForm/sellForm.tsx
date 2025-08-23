@@ -9,8 +9,9 @@ type SellFormProps = {
   email: string;
   stocks: Stock[];
   funds: number;
-  stockPrices: { [key: string]: number }
+  stockPrices: { [key: string]: { data: { close: number }[] } };
 };
+
 
 export default function SellForm({ email, stocks, funds, stockPrices }: SellFormProps) {
 
@@ -23,7 +24,9 @@ export default function SellForm({ email, stocks, funds, stockPrices }: SellForm
         const formData = new FormData(event.currentTarget);
         const sellQuantity = formData.get("sellQuantity"); 
         const newQuantity = selectedQuantity - (sellQuantity ? Number(sellQuantity) : 0);
-        const newFunds = funds + (selectedPrice * Number(sellQuantity));
+        const currentPrice = formData.get("currentPrice");
+        const newFunds = funds + (currentPrice ? Number(currentPrice) * Number(sellQuantity) : 0);
+
         if (newQuantity === 0) {
             try {
                 await deleteStock(selectedTicker, email);
@@ -72,8 +75,8 @@ export default function SellForm({ email, stocks, funds, stockPrices }: SellForm
         <div>Ticker: {selectedTicker}</div>
         <div>Owned Quantity: {selectedQuantity}</div>
         <div>Bought At: {selectedPrice}</div>
-        <div>Current Price: {stockPrices[selectedTicker]?.data[0]?.close || 'N/A'}</div>
-
+        <div>Current Price: {stockPrices[selectedTicker]?.data[0]?.close.toFixed(2) || 0}</div>
+        <input type="hidden" name="currentPrice" value={stockPrices[selectedTicker]?.data[0]?.close || 0} />
         <Input type="number" placeholder="Quantity" name="sellQuantity" min={1} max={selectedQuantity} required/>
         <Button type="submit">Sell</Button>
       </form>
