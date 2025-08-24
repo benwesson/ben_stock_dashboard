@@ -1,6 +1,6 @@
 "use client";
 
-import { Table } from "@/components/ui/table";
+
 import { addFunds } from "@/api/prisma_api";
 import { Button, Input, Form } from "@chakra-ui/react"
 type FundFormProps = {

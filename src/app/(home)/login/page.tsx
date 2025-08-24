@@ -1,5 +1,5 @@
 "use client";
-
+import { Button } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
@@ -17,9 +17,10 @@ export default function LoginPage() {
 
   return (
     <div>
-      <button onClick={() => signIn("google", { callbackUrl: "/" })}>
+      <Button onClick={() => signIn("google", { callbackUrl: "/" })}>
         Sign in with Google
-      </button>
+      </Button>
+      
     </div>
   );
 }
