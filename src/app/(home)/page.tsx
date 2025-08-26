@@ -14,6 +14,7 @@ export default async function TradePage() {
   if (email) {
     const funds = await getFunds(email);
     const stocks = (await findStocks(email).catch(() => [])) || [];
+    console.log("Stocks in TradePage:", stocks);
     const priceResponse = await fetchMultipleStocks(stocks.map((stock) => stock.ticker));
     const stockPrices = priceResponse.data;
     return (

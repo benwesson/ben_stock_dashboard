@@ -19,12 +19,10 @@ model Stock {
   price        Float
   quantity     Int
   purchaseTime DateTime @default(now())
-
-
   User   User?   @relation(fields: [userEmail], references: [email], onDelete: Cascade)
   userEmail String
-  @@unique([userEmail, ticker])      
-  @@index([userEmail])
+    
+  @@index([userEmail, ticker])
 }
 
 model Account {

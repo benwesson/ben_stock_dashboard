@@ -47,30 +47,30 @@ export default function BuyForm({ email, funds }: BuyFormProps) {
     const formQuantity = Number(formData.get("quantity"));
 
     //If you already own the stock
-    if (ownedStocks > 0) {
-      const newQuantity = ownedStocks + formQuantity;
+    // if (ownedStocks > 0) {
+    //   const newQuantity = ownedStocks + formQuantity;
 
-      try {
-        const newFunds = funds - formQuantity * stockPrice;
-        if (newFunds > funds) {
-          alert("Insufficient funds");
-        } else {
-          await updateStock(stockTicker, newQuantity, email);
-          await addFunds(email, newFunds);
+    //   try {
+    //     const newFunds = funds - formQuantity * stockPrice;
+    //     if (newFunds > funds) {
+    //       alert("Insufficient funds");
+    //     } else {
+    //       await updateStock(stockTicker, newQuantity, email);
+    //       await addFunds(email, newFunds);
 
-          alert(
-            `Successfully bought ${formQuantity} shares of ${stockTicker} your balance is ${newFunds.toFixed(
-              2
-            )}`
-          );
-        }
-      } catch (error) {
-        alert("Error updating stock");
-      }
-    }
+    //       alert(
+    //         `Successfully bought ${formQuantity} shares of ${stockTicker} your balance is ${newFunds.toFixed(
+    //           2
+    //         )}`
+    //       );
+    //     }
+    //   } catch (error) {
+    //     alert("Error updating stock");
+    //   }
+    // }
     
     //If you don't own the stock
-    else {
+    
       try {
         const newFunds = funds - formQuantity * stockPrice;
 
@@ -91,7 +91,7 @@ export default function BuyForm({ email, funds }: BuyFormProps) {
       } catch (error) {
         alert("Error creating stock");
       }
-    }
+    
   };
 
   return (
