@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
 import { updateStock, deleteStock, addFunds } from "@/api/prisma_api";
-import { Button, Input, } from "@chakra-ui/react";
-
-type Stock = { ticker: string; quantity: number; price: number };
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+type Stock = { id:number, ticker: string; quantity: number; price: number };
 
 type SellFormProps = {
   email: string;
@@ -66,7 +67,7 @@ export default function SellForm({ email, stocks, funds, stockPrices }: SellForm
         <select name="ticker" onChange={(e) => handleSelect(e)} required>
           <option value="">Select a stock to sell</option>
           {stocks.map((stock) => (
-            <option key={stock.ticker} value={stock.ticker}>
+            <option key={stock.id} value={stock.ticker}>
               {stock.ticker} - {stock.quantity} shares
             </option>
           ))}

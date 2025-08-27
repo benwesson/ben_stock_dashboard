@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@chakra-ui/react";
+import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";

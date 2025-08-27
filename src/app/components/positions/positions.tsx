@@ -1,28 +1,70 @@
-type Stock = { id:number,ticker: string; quantity: number; price: number };
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+type Stock = { id: number; ticker: string; quantity: number; price: number };
 type StockPrices = { [key: string]: { data: { close: number }[] } };
 
-export default function Positions({ stocks, stockPrices }: { stocks: Stock[]; stockPrices: StockPrices }) {
-  console.log("Stock Prices in Positions:", stockPrices.data);
+export default function Positions({
+  stocks,
+  stockPrices,
+}: {
+  stocks: Stock[];
+  stockPrices: StockPrices;
+}) {
   const gainLoss = (stock: Stock) => {
-    const currentPrice = stockPrices[stock.ticker.toUpperCase()]?.data[0]?.close || 0;
+    const currentPrice =
+      stockPrices[stock.ticker.toUpperCase()]?.data[0]?.close || 0;
     return (currentPrice - stock.price) * stock.quantity;
   };
+
   return (
     <div>
       <h1>Your Positions</h1>
-      {stocks.length > 0 ? (
-        <ul>
-          {stocks.map((stock) => (
-            <li key={stock.id}>
-              {stock.ticker}: {stock.quantity} bought at ${stock.price.toFixed(2)} | Current Price: ${stockPrices[stock.ticker.toUpperCase()]?.data[0]?.close.toFixed(2) || "N/A"} | Gain/Loss: ${gainLoss(stock).toFixed(2)}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No positions found.</p>
-      )}
-
-      
+      <Table>
+        
+        <TableHeader>
+          <TableRow>
+            <TableHead>Ticker</TableHead>
+            <TableHead>Quantity</TableHead>
+            <TableHead>Bought At</TableHead>
+            <TableHead>Current Price</TableHead>
+            <TableHead>Gain/Loss</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {stocks.length > 0 ? (
+            stocks.map((stock) => {
+              const currentPrice =
+                stockPrices[stock.ticker.toUpperCase()]?.data[0]?.close;
+              return (
+                <TableRow key={stock.id}>
+                  <TableCell>{stock.ticker.toUpperCase()}</TableCell>
+                  <TableCell>{stock.quantity}</TableCell>
+                  <TableCell>${stock.price.toFixed(2)}</TableCell>
+                  <TableCell>
+                    {typeof currentPrice === "number"
+                      ? `$${currentPrice.toFixed(2)}`
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell>
+                    ${gainLoss(stock).toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5}>No positions found.</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }

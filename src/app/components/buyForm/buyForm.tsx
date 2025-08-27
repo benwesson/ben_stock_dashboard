@@ -1,6 +1,7 @@
 "use client";
 import { fetchStock } from "@/api/stock_api";
-import { Button, Input } from "@chakra-ui/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   createStock,
   findTicker,

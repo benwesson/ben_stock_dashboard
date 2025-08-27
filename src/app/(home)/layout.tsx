@@ -4,7 +4,7 @@ import "@/globals.css";
 import styles from "./home.module.css";
 import Navbar from "@/components/navbar/navbar";
 import AuthProvider from "@/providers/AuthProvider";
-import { Provider } from "@/components/chakraComponets/ui/provider"
+
 const sourceSans3 = Source_Sans_3({
   subsets: ["latin"],
   display: "swap", // or 'fallback', 'optional', 'block'
@@ -24,12 +24,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={sourceSans3.className}>
         <AuthProvider>
-          <Provider>
+          
             <Navbar />
             <div className={styles.container}>
               <div className={styles.main}>{children}</div>
             </div>
-          </Provider>
+          
         </AuthProvider>
       </body>
     </html>
