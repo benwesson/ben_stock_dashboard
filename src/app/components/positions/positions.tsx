@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 type Stock = { id: number; ticker: string; quantity: number; price: number };
 type StockPrices = { [key: string]: { data: { close: number }[] } };
 
@@ -23,8 +24,22 @@ export default function Positions({
     return (currentPrice - stock.price) * stock.quantity;
   };
 
+  // Build stockQuantities: { [ticker]: totalQuantity }
+  const stockQuantities: { [ticker: string]: number } = {};
+  stocks.forEach((stock) => {
+    const t = stock.ticker.toUpperCase();
+    stockQuantities[t] = (stockQuantities[t] || 0) + stock.quantity;
+  });
+
+  // Build chartData: { [ticker]: number[] } (array of prices, most recent first)
+  const chartData: { [ticker: string]: number[] } = {};
+  Object.entries(stockPrices).forEach(([ticker, priceObj]) => {
+    chartData[ticker.toUpperCase()] = (priceObj?.data || []).map((d) => d.close);
+  });
+
   return (
     <div>
+      
       <h1>Your Positions</h1>
       <Table>
         

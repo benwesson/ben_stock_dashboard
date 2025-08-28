@@ -1,283 +1,210 @@
-"use client";
-import styles from './portfolioChart.module.css';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer 
-} from 'recharts';
-import { useState } from 'react';
+"use client"
 
-interface PortfolioChartProps {
-  chartData: { [ticker: string]: number[] };
-  stockQuantities: { [ticker: string]: number };
+import * as React from "react"
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
+
+type Stock = { id: number; ticker: string; quantity: number; price: number }
+type StockPrices = { [key: string]: { data: { close: number; date: string }[] } }
+
+export type PortfolioSeries = {
+  name: string
+  data: { date: string; value: number }[]
 }
 
-export default function PortfolioChart({ chartData, stockQuantities }: PortfolioChartProps) {
-  const [visibleLines, setVisibleLines] = useState<Set<string>>(new Set(['totalPortfolio', ...Object.keys(chartData || {})]));
+type Props = {
+  stocks: Stock[]
+  stockPrices: StockPrices
+  mode?: "price" | "value" // price = close, value = close * totalQty per ticker
+  title?: string
+  description?: string
+}
 
-  if (!chartData || Object.keys(chartData).length === 0) {
-    return (
-      <div className={styles.chart_container}>
-        <p>No chart data available</p>
-      </div>
-    );
+// Aggregate total quantity per ticker (handles multiple lots)
+function aggregateQuantities(stocks: Stock[]) {
+  const map: Record<string, number> = {}
+  for (const s of stocks) {
+    const t = s.ticker.toUpperCase()
+    map[t] = (map[t] || 0) + Number(s.quantity || 0)
   }
+  return map
+}
 
-  // Calculate combined portfolio value for each day
-  const tickers = Object.keys(chartData);
-  const maxLength = Math.max(...tickers.map(ticker => chartData[ticker].length));
-  
-  // Dynamic color generation based on number of tickers
-  const generateColors = (count: number) => {
-    const baseColors = ['#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1', '#d084d0', '#a4de6c', '#ffc0cb', '#87ceeb', '#dda0dd', '#f0e68c'];
-    
-    if (count <= baseColors.length) {
-      return baseColors.slice(0, count);
-    }
-    
-    // Generate additional colors using HSL
-    const colors = [...baseColors];
-    const remainingCount = count - baseColors.length;
-    
-    for (let i = 0; i < remainingCount; i++) {
-      const hue = (i * 360 / remainingCount) % 360;
-      const saturation = 60 + (i % 3) * 15;
-      const lightness = 50 + (i % 2) * 20;
-      colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
-    }
-    
-    return colors;
-  };
+// Build series from props
+function buildPortfolioSeries(
+  stocks: Stock[],
+  stockPrices: StockPrices,
+  mode: "price" | "value"
+): PortfolioSeries[] {
+  const qtyByTicker = aggregateQuantities(stocks)
+  const tickers = Object.keys(qtyByTicker)
 
-  const colors = generateColors(tickers.length);
-
-  // Prepare data for Recharts
-  const chartDataFormatted = [];
-  
-  for (let dayIndex = 0; dayIndex < maxLength; dayIndex++) {
-    const date = new Date();
-    date.setDate(date.getDate() - (maxLength - 1 - dayIndex));
-    
-    let totalPortfolioValue = 0;
-    const dayData: any = {
-      date: date.toLocaleDateString(),
-      fullDate: date.toISOString().split('T')[0],
-    };
-    
-    // Calculate individual stock values and total
-    tickers.forEach(ticker => {
-      const prices = chartData[ticker];
-      const quantity = stockQuantities[ticker] || 0;
-      
-      if (prices && prices[dayIndex] !== undefined) {
-        const stockValue = prices[dayIndex] * quantity;
-        dayData[ticker] = stockValue;
-        totalPortfolioValue += stockValue;
-      } else {
-        dayData[ticker] = 0;
+  return tickers
+    .map((ticker) => {
+      const prices = stockPrices[ticker]?.data || []
+      const qty = qtyByTicker[ticker] || 0
+      return {
+        name: ticker,
+        data: prices.map((d) => ({
+          date: d.date,
+          value: mode === "value" ? d.close * qty : d.close,
+        })),
       }
-    });
-    
-    dayData.totalPortfolio = totalPortfolioValue;
-    chartDataFormatted.push(dayData);
+    })
+    // drop empty series
+    .filter((s) => s.data.length > 0)
+}
+
+// Flatten [{name, data:[{date,value}]}] -> [{date, [name]: value, ...}, ...]
+function flattenSeriesToRows(series: PortfolioSeries[]) {
+  const dateMap = new Map<string, Record<string, any>>()
+  for (const s of series) {
+    for (const pt of s.data) {
+      const key = pt.date
+      if (!dateMap.has(key)) dateMap.set(key, { date: key })
+      dateMap.get(key)![s.name] = pt.value
+    }
   }
+  return Array.from(dateMap.values()).sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  )
+}
 
-  // Legend interaction functions
-  const toggleLine = (lineKey: string) => {
-    setVisibleLines(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(lineKey)) {
-        newSet.delete(lineKey);
-      } else {
-        newSet.add(lineKey);
-      }
-      return newSet;
-    });
-  };
+// Dynamic ChartConfig
+function buildConfig(seriesNames: string[]): ChartConfig {
+  const palette = [
+    "var(--chart-1)",
+    "var(--chart-2)",
+    "var(--chart-3)",
+    "var(--chart-4)",
+    "var(--chart-5)",
+  ]
+  const cfg: ChartConfig = {
+    views: { label: "Stock price" },
+  } as ChartConfig
 
-  const showOnlyStock = (ticker: string) => {
-    setVisibleLines(new Set([ticker]));
-  };
+  seriesNames.forEach((name, i) => {
+    // @ts-expect-error dynamic keys allowed by ChartConfig shape
+    cfg[name] = { label: name, color: palette[i % palette.length] }
+  })
+  return cfg
+}
 
-  const showAll = () => {
-    setVisibleLines(new Set(['totalPortfolio', ...tickers]));
-  };
+export default function PortfolioChart({
+  stocks,
+  stockPrices,
+  mode = "price",
+  title = "Portfolio Line Chart",
+  description = "Select a stock to view its price",
+}: Props) {
+  const series = React.useMemo(
+    () => buildPortfolioSeries(stocks, stockPrices, mode),
+    [stocks, stockPrices, mode]
+  )
 
-  // Custom tooltip formatter
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const visiblePayload = payload.filter((entry: any) => visibleLines.has(entry.dataKey));
-      
-      return (
-        <div className={styles.chart_tooltip}>
-          <p style={{ margin: '0 0 5px 0', fontWeight: 'bold' }}>{label}</p>
-          {visiblePayload.map((entry: any, index: number) => (
-            <p key={index} style={{ margin: '2px 0', color: entry.color }}>
-              {`${entry.dataKey === 'totalPortfolio' ? 'Total Portfolio' : entry.dataKey}: $${entry.value.toLocaleString(undefined, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-              })}`}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
+  const seriesNames = React.useMemo(() => series.map((s) => s.name), [series])
+  const rows = React.useMemo(() => flattenSeriesToRows(series), [series])
+  const chartConfig = React.useMemo(() => buildConfig(seriesNames), [seriesNames])
+
+  const [activeSeries, setActiveSeries] = React.useState<string>(
+    seriesNames[0] || ""
+  )
+
+  const totals = React.useMemo(() => {
+    const agg: Record<string, number> = {}
+    seriesNames.forEach((name) => {
+      agg[name] = rows.reduce((a, r) => a + (Number(r[name]) || 0), 0)
+    })
+    return agg
+  }, [rows, seriesNames])
+
+  if (seriesNames.length === 0) {
+    return <div>No series to display.</div>
+  }
 
   return (
-    <div>
-      {/* Interactive Legend Buttons */}
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '8px',
-        justifyContent: 'center',
-        padding: '15px 10px',
-        marginBottom: '10px',
-        borderBottom: '1px solid #e0e0e0'
-      }}>
-        <button 
-          onClick={showAll}
-          style={{
-            padding: '6px 12px',
-            border: '2px solid #666',
-            borderRadius: '20px',
-            background: '#f8f9fa',
-            color: '#666',
-            cursor: 'pointer',
-            fontSize: '12px',
-            fontWeight: '500',
-            transition: 'all 0.2s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#e9ecef';
-            e.currentTarget.style.transform = 'translateY(-1px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#f8f9fa';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          Show All
-        </button>
-        
-        <button
-          onClick={() => toggleLine('totalPortfolio')}
-          style={{
-            padding: '6px 12px',
-            border: '2px solid #2563eb',
-            borderRadius: '20px',
-            background: visibleLines.has('totalPortfolio') ? 'rgba(37, 99, 235, 0.1)' : 'white',
-            color: visibleLines.has('totalPortfolio') ? '#2563eb' : '#999',
-            cursor: 'pointer',
-            fontSize: '12px',
-            fontWeight: visibleLines.has('totalPortfolio') ? '600' : '500',
-            opacity: visibleLines.has('totalPortfolio') ? 1 : 0.6,
-            transition: 'all 0.2s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-1px)';
-            e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-        >
-          Total Portfolio
-        </button>
-        
-        {tickers.map((ticker, index) => (
-          <button
-            key={ticker}
-            onClick={() => showOnlyStock(ticker)}
-            style={{
-              padding: '6px 12px',
-              border: `2px solid ${colors[index]}`,
-              borderRadius: '20px',
-              background: visibleLines.has(ticker) ? `${colors[index]}20` : 'white',
-              color: visibleLines.has(ticker) ? colors[index] : '#999',
-              cursor: 'pointer',
-              fontSize: '12px',
-              fontWeight: visibleLines.has(ticker) ? '600' : '500',
-              opacity: visibleLines.has(ticker) ? 1 : 0.6,
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            {ticker}
-          </button>
-        ))}
-      </div>
-
-      {/* Chart Container -  */}
-      <div className={styles.chart_container}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartDataFormatted}
-            margin={{ top: 10, right: 15, left: 5, bottom: 10 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis 
-              dataKey="date" 
-              stroke="#666"
-              fontSize={11}
-              interval="preserveStartEnd"
+    <Card className="py-4 sm:py-0 mt-8 mb-8">
+      <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 sm:pb-0">
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </div>
+        <div className="flex overflow-x-auto">
+          {seriesNames.map((name) => (
+            <button
+              key={name}
+              data-active={activeSeries === name}
+              className="data-[active=true]:bg-muted/50 flex min-w-36 flex-1 flex-col justify-center gap-1 border-t px-4 py-3 text-left even:border-l sm:border-t-0 sm:border-l sm:px-6 sm:py-4"
+              onClick={() => setActiveSeries(name)}
+              title={chartConfig[name]?.label ?? name}
+            >
+              <span className="text-muted-foreground text-xs">
+                {chartConfig[name]?.label ?? name}
+              </span>
+              <span className="text-lg leading-none font-bold sm:text-2xl">
+                ${Math.round(totals[name] || 0).toLocaleString()}USD
+              </span>
+            </button>
+          ))}
+        </div>
+      </CardHeader>
+      <CardContent className="px-2 sm:p-6">
+        <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+          <LineChart accessibilityLayer data={rows} margin={{ left: 12, right: 12 }}>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={32}
+              tickFormatter={(value) =>
+                new Date(value).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })
+              }
             />
-            <YAxis 
-              stroke="#666"
-              fontSize={11}
-              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-              width={45}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            
-            {/* Main portfolio line */}
-            {visibleLines.has('totalPortfolio') && (
-              <Line 
-                type="monotone" 
-                dataKey="totalPortfolio" 
-                stroke="#2563eb"
-                strokeWidth={3}
-                name="Total Portfolio"
-                dot={false}
-                activeDot={{ r: 5, stroke: '#2563eb', strokeWidth: 2 }}
-              />
-            )}
-            
-            {/* Individual stock lines */}
-            {tickers.map((ticker, index) => (
-              visibleLines.has(ticker) && (
-                <Line 
-                  key={ticker}
-                  type="monotone" 
-                  dataKey={ticker} 
-                  stroke={colors[index]}
-                  strokeWidth={2}
-                  name={ticker}
-                  dot={false}
-                  strokeDasharray="5 5"
-                  activeDot={{ r: 3, stroke: colors[index], strokeWidth: 1 }}
+            <YAxis tickMargin={8} tickLine={false} axisLine={false} />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  className="w-[150px]"
+                  nameKey="views"
+                  labelFormatter={(value) =>
+                    new Date(value).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                  }
                 />
-              )
-            ))}
+              }
+            />
+            <Line
+              dataKey={activeSeries}
+              type="monotone"
+              stroke={`var(--color-${activeSeries})`}
+              strokeWidth={2}
+              dot={false}
+              isAnimationActive={false}
+            />
           </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-     
-    </div>
-  );
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  )
 }

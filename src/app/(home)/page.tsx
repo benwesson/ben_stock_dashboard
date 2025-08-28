@@ -5,7 +5,7 @@ import { getFunds } from "@/api/prisma_api";
 import ShowFunds from "@/components/fundComponents/showFunds";
 import { findStocks } from "@/api/prisma_api";
 import {  fetchMultipleStocks } from "@/api/stock_api";
-
+import PortfolioChart, { makePortfolioChartData } from "@/components/portfolioChart/portfolioChart"
 export default async function TradePage() {
   
   const session = await getServerSession(authOptions);
@@ -17,9 +17,11 @@ export default async function TradePage() {
     console.log("Stocks in TradePage:", stocks);
     const priceResponse = await fetchMultipleStocks(stocks.map((stock) => stock.ticker));
     const stockPrices = priceResponse.data;
+
     return (
       <>
         <ShowFunds funds={funds} email={email} />
+        <PortfolioChart stocks={stocks} stockPrices={stockPrices}  />
         <Positions stocks={stocks} stockPrices={stockPrices} />
       </>
     
