@@ -3,6 +3,15 @@
 import { addFunds } from "@/api/prisma_api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 type FundFormProps = {
   email: string;
   funds: number;
@@ -25,7 +34,8 @@ export default function FundForm({ email, funds }: FundFormProps) {
     }
   };
   return (
-    <div>
+    <Card className="mt-8">
+      <CardContent>
       <p>Signed in as: {email}</p>
       <form onSubmit={handleSubmit}>
         <h1>Fund Your Account</h1>
@@ -38,7 +48,7 @@ export default function FundForm({ email, funds }: FundFormProps) {
         />
         <Button type="submit">Add Funds</Button>
       </form>
-     
-    </div>
+     </CardContent>
+    </Card>
   );
 }

@@ -15,10 +15,11 @@ export default async function TradePage() {
 
     return (
       <>
-        <ShowFunds funds={funds} email={email} />
-        <BuyForm email={email} funds={funds} />
-      </>
-    
+      
+          <ShowFunds funds={funds} email={email} />
+          <BuyForm email={email} funds={funds} />
+ 
+    </>
 
     )
   }

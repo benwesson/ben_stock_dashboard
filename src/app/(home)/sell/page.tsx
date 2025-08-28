@@ -4,31 +4,41 @@ import { authOptions } from "@/utils/authOptions";
 import { getFunds } from "@/api/prisma_api";
 import { findStocks } from "@/api/prisma_api";
 import ShowFunds from "@/components/fundComponents/showFunds";
-import {  fetchMultipleStocks } from "@/api/stock_api";
-
+import { fetchMultipleStocks } from "@/api/stock_api";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 export default async function TradePage() {
-  
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
-  
+
   if (email) {
     const stocks = (await findStocks(email).catch(() => [])) || [];
     const funds = await getFunds(email);
-    const priceResponse = await fetchMultipleStocks(stocks.map((stock) => stock.ticker));
+    const priceResponse = await fetchMultipleStocks(
+      stocks.map((stock) => stock.ticker)
+    );
     const stockPrices = priceResponse.data;
     console.log("Fetched stock prices:", stockPrices);
 
     return (
       <>
         <ShowFunds funds={funds} email={email} />
-        <SellForm email={email} stocks={stocks} funds={funds} stockPrices={stockPrices} />
+        <SellForm
+          email={email}
+          stocks={stocks}
+          funds={funds}
+          stockPrices={stockPrices}
+        />
       </>
-    
-
-    )
-  }
-  else {
+    );
+  } else {
     return <div>Please sign in to buy stocks.</div>;
   }
-
 }

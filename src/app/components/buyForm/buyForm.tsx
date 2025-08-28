@@ -10,6 +10,15 @@ import {
   getFunds,
 } from "@/api/prisma_api";
 import { useState } from "react";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 type BuyFormProps = { email: string; funds: number };
 export default function BuyForm({ email, funds }: BuyFormProps) {
   const [stockTicker, setStockTicker] = useState<string>("none");
@@ -96,7 +105,8 @@ export default function BuyForm({ email, funds }: BuyFormProps) {
   };
 
   return (
-    <div>
+    <Card className="mt-8">
+      <CardContent>
       <p>Signed in as: {email}</p>
       <h1>Search for Stocks</h1>
       <form onSubmit={handleSearch}>
@@ -112,6 +122,7 @@ export default function BuyForm({ email, funds }: BuyFormProps) {
         <Input type="number" placeholder="Quantity" name="quantity" />
         <Button type="submit">Buy</Button>
       </form>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
