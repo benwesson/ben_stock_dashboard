@@ -26,20 +26,26 @@ export default function LoginPage() {
 
   return (
     <div>
-      <Card>
+      <Card className="mt-8">
         <CardHeader>
-          <CardTitle>Card Title</CardTitle>
-          <CardDescription>Card Description</CardDescription>
-          <CardAction>Card Action</CardAction>
+          <CardTitle>Login</CardTitle>
+          <CardDescription>Log in to your account</CardDescription>
+          
         </CardHeader>
         <CardContent>
-          <p>Card Content</p>
+          
           <Button onClick={() => signIn("google", { callbackUrl: "/" })}>
             Sign in with Google
           </Button>
+          <br></br>
+          <Button className="mt-8" >
+            Sign in with Github
+          </Button>
+          
+
         </CardContent>
         <CardFooter>
-          <p>Card Footer</p>
+        
         </CardFooter>
       </Card>
     </div>

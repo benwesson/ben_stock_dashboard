@@ -9,7 +9,7 @@ export async function createStock(ticker: string, quantity: number, price: numbe
 }
 
 export async function findTicker(ticker: string, userEmail: string) {
-  return prisma.stock.findFirst({
+  return prisma.stock.findMany({
     where: { ticker: ticker.toUpperCase(), userEmail: userEmail },
     select: { ticker: true, quantity: true, price: true, id: true },
   });
@@ -52,4 +52,12 @@ export async function getFunds(email: string) {
     select: { funds: true },
   });
   return user?.funds || 0;
+} 
+
+export async function findDistinctTickers(email: string) {
+  return prisma.stock.findMany({
+    where: { userEmail: email },
+    select: { ticker: true },
+    distinct: ['ticker'],
+  });
 }
