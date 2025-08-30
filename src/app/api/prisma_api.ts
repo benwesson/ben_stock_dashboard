@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/utils/prisma";
-import { Prisma } from "@prisma/client";
+
 export async function createStock(ticker: string, quantity: number, price: number, userEmail: string) {
   await prisma.stock.create({
     data: { ticker: ticker.toUpperCase(), quantity, price, userEmail },

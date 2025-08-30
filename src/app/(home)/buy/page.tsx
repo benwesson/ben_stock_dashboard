@@ -21,8 +21,8 @@ export default async function TradePage() {
 
           <ShowFunds funds={funds} email={email} />
           <BuyForm email={email} funds={funds} />
- 
-    </>
+
+      </>
 
     )
   }

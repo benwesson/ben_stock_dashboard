@@ -130,7 +130,7 @@ export default function BuyForm({ email, funds }: BuyFormProps) {
         <h1>Search for Stocks</h1>
         <form onSubmit={handleSearch}>
           <Input type="text" placeholder="Ticker" name="ticker" required />
-          <Button type="submit">Search</Button>
+          <Button className="mt-4" type="submit">Search</Button>
         </form>
 
         <form onSubmit={handleBuy}>
@@ -141,7 +141,7 @@ export default function BuyForm({ email, funds }: BuyFormProps) {
           <div>Ticker: {stockTicker}</div>
           <div>Price: {stockPrice}</div>
           <Input type="number" placeholder="Quantity" name="quantity" min={1} />
-          <Button type="submit">Buy</Button>
+          <Button className="mt-4" type="submit">Buy</Button>
         </form>
       </CardContent>
     </Card>

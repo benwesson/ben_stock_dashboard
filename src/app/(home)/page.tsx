@@ -6,8 +6,9 @@ import ShowFunds from "@/components/fundComponents/showFunds";
 import { findStocks, findDistinctTickers } from "@/api/prisma_api";
 import { fetchMultipleStocks } from "@/api/stock_api";
 import PortfolioChart from "@/components/portfolioChart/portfolioChart"
-
+// {params,}:{params} Promise<{ lang: string }>
 export default async function TradePage() {
+  // const { lang} = await params;
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
 
