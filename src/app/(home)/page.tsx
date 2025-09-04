@@ -6,9 +6,10 @@ import ShowFunds from "@/components/fundComponents/showFunds";
 import { findStocks, findDistinctTickers } from "@/api/prisma_api";
 import { fetchMultipleStocks } from "@/api/stock_api";
 import PortfolioChart from "@/components/portfolioChart/portfolioChart"
+import {getTranslations} from 'next-intl/server';
 // {params,}:{params} Promise<{ lang: string }>
 export default async function TradePage() {
-  // const { lang} = await params;
+  const t = await getTranslations("HomePage");
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
 
@@ -39,6 +40,8 @@ export default async function TradePage() {
 
   return (
     <>
+      <h1>{t('title')}</h1>
+      <p>{t('content')}</p>
       <ShowFunds funds={funds} email={email} />
       <PortfolioChart stocks={stocks} stockPrices={stockPrices} />
       <Positions stocks={stocks} stockPrices={stockPrices} />
