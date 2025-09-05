@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
-
 import {
   Card,
   CardContent,
@@ -16,6 +15,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useTranslations } from "next-intl"
 
 type Stock = { id: number; ticker: string; quantity: number; price: number }
 type StockPrices = { [key: string]: { data: { close: number; date: string }[] } }
@@ -107,21 +107,19 @@ export default function PortfolioChart({
   stocks,
   stockPrices,
   mode = "price",
-  title = "Portfolio Line Chart",
-  description = "Select a stock to view its price",
+  title,
+  description,
 }: Props) {
+  const t = useTranslations("PortfolioChart") // client i18n
   const series = React.useMemo(
     () => buildPortfolioSeries(stocks, stockPrices, mode),
     [stocks, stockPrices, mode]
   )
-
   const seriesNames = React.useMemo(() => series.map((s) => s.name), [series])
   const rows = React.useMemo(() => flattenSeriesToRows(series), [series])
   const chartConfig = React.useMemo(() => buildConfig(seriesNames), [seriesNames])
 
-  const [activeSeries, setActiveSeries] = React.useState<string>(
-    seriesNames[0] || ""
-  )
+  const [activeSeries, setActiveSeries] = React.useState<string>(seriesNames[0] || "")
 
   const totals = React.useMemo(() => {
     const agg: Record<string, number> = {}
@@ -131,6 +129,9 @@ export default function PortfolioChart({
     return agg
   }, [rows, seriesNames])
 
+  const titleText = title ?? t("title")
+  const descText = description ?? t("Subtitle")
+
   if (seriesNames.length === 0) {
     return <div>No series to display.</div>
   }
@@ -139,8 +140,8 @@ export default function PortfolioChart({
     <Card className="py-4 sm:py-0 mt-8 mb-8">
       <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 sm:pb-0">
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardTitle>{titleText}</CardTitle>
+          <CardDescription>{descText}</CardDescription>
         </div>
         <div className="flex overflow-x-auto">
           {seriesNames.map((name) => (

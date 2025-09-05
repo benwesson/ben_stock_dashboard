@@ -13,5 +13,9 @@
         "Bought At": "Bought At",
         "Current Price": "Current Price",
         "Gain/Loss": "Gain/Loss"
+    },
+    "PortfolioChart": {
+        "title":"Welcome to the homepage",
+        "Subtitle":"Select a stock to view its price"
     }
 }

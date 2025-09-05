@@ -12,5 +12,9 @@
         "Bought At": "Acheté À",
         "Current Price": "Prix Actuel",
         "Gain/Loss": "Gain/Perte"
+    },
+    "PortfolioChart": {
+        "title": "Graphique de Portefeuille",
+        "Subtitle": "Sélectionnez une action pour voir son prix"
     }
 }
