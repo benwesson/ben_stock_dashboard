@@ -2,5 +2,16 @@
     "HomePage": {
         "title": "Welcome to the homepage",
         "content":"This is the homepage content"
+    },
+    "ShowFunds": {
+        "funds": "Current Funds:"
+        
+    },
+    "Positions": {
+        "Ticker": "Ticker",
+        "Quantity": "Quantity",
+        "Bought At": "Bought At",
+        "Current Price": "Current Price",
+        "Gain/Loss": "Gain/Loss"
     }
 }

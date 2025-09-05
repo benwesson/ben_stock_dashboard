@@ -16,17 +16,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {getTranslations} from 'next-intl/server';
 
 type Stock = { id: number; ticker: string; quantity: number; price: number };
 type StockPrices = { [key: string]: { data: { close: number }[] } };
 
-export default function Positions({
+export default async function Positions({
   stocks,
   stockPrices,
 }: {
   stocks: Stock[];
   stockPrices: StockPrices;
 }) {
+  const t = await getTranslations("Positions");
   const gainLoss = (stock: Stock) => {
     const currentPrice =
       stockPrices[stock.ticker.toUpperCase()]?.data[0]?.close || 0;
@@ -55,11 +57,11 @@ export default function Positions({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Ticker</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Bought At</TableHead>
-              <TableHead>Current Price</TableHead>
-              <TableHead>Gain/Loss</TableHead>
+              <TableHead>{t("Ticker")}</TableHead>
+              <TableHead>{t("Quantity")}</TableHead>
+              <TableHead>{t("Bought At")}</TableHead>
+              <TableHead>{t("Current Price")}</TableHead>
+              <TableHead>{t("Gain/Loss")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

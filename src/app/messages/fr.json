@@ -2,5 +2,15 @@
     "HomePage": {
         "title": "Bienvenue sur la page d'accueil",
         "content":"Ceci est le contenu de la page d'accueil"
+    },
+     "ShowFunds": {
+        "funds": "Fonds Actuels:"
+    },
+    "Positions": {
+        "Ticker": "Symbole",
+        "Quantity": "Quantité",
+        "Bought At": "Acheté À",
+        "Current Price": "Prix Actuel",
+        "Gain/Loss": "Gain/Perte"
     }
 }

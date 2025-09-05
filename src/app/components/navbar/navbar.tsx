@@ -30,18 +30,7 @@ export default function Navbar() {
         <div>
           <AuthLink />
         </div>
-        <div>
-          <Select>
-            <SelectTrigger >
-              <SelectValue placeholder="EN" />
-            </SelectTrigger>
-
-            <SelectContent>
-              <SelectItem value="en"><button>EN</button></SelectItem>
-              <SelectItem value="fr"><button>FR</button></SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        
       </div>
     </div>
   );

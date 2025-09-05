@@ -33,8 +33,9 @@ export default async function RootLayout({
           
             <Navbar />
             <div className={styles.container}>
-              <div className={styles.main}><NextIntlClientProvider>{children}</NextIntlClientProvider></div>
               <LanguageSelect value={locale} />
+              <div className={styles.main}><NextIntlClientProvider>{children}</NextIntlClientProvider></div>
+              
             </div>
           
         </AuthProvider>
