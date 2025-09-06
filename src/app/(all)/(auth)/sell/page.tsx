@@ -1,10 +1,10 @@
 import SellForm from "@/components/sellForm/sellForm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
-import { getFunds } from "@/api/prisma_api";
-import { findStocks,findDistinctTickers } from "@/api/prisma_api";
+import { getFunds } from "@/actions/prisma_api";
+import { findStocks,findDistinctTickers } from "@/actions/prisma_api";
 import ShowFunds from "@/components/fundComponents/showFunds";
-import { fetchMultipleStocks } from "@/api/stock_api";
+import { fetchMultipleStocks } from "@/actions/stock_api";
 
 // src
 // -- app

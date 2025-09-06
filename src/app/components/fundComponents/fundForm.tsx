@@ -1,6 +1,6 @@
 "use client";
 
-import { addFunds } from "@/api/prisma_api";
+import { addFunds } from "@/actions/prisma_api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {

@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
-import { getFunds } from "@/api/prisma_api";
+import { getFunds } from "@/actions/prisma_api";
 import ShowFunds from "@/components/fundComponents/showFunds";
 import FundForm from "@/components/fundComponents/fundForm";
 

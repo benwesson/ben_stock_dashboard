@@ -1,10 +1,10 @@
 import Positions from "@/components/positions/positions";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
-import { getFunds } from "@/api/prisma_api";
+import { getFunds } from "@/actions/prisma_api";
 import ShowFunds from "@/components/fundComponents/showFunds";
-import { findStocks, findDistinctTickers } from "@/api/prisma_api";
-import { fetchMultipleStocks } from "@/api/stock_api";
+import { findStocks, findDistinctTickers } from "@/actions/prisma_api";
+import { fetchMultipleStocks } from "@/actions/stock_api";
 import PortfolioChart from "@/components/portfolioChart/portfolioChart"
 import {getTranslations} from 'next-intl/server';
 

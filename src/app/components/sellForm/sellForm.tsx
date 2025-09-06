@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { updateStock, deleteStock, addFunds } from "@/api/prisma_api";
+import { updateStock, deleteStock, addFunds } from "@/actions/prisma_api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
