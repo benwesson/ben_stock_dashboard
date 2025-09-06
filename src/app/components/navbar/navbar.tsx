@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import "@/globals.css"
 import styles from "@/components/navbar/navbar.module.css";
 import AuthLink from "@/components/authlink/authlink";
 import {
@@ -19,16 +19,16 @@ export default async function Navbar({ locale }: { locale: string }) {
     <div className={styles.container}>
       <div className={styles.links}>
         <div>
-          <Link href="/">Account</Link>
+          <Link className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white" href="/">Account</Link>
         </div>
         <div>
-          <Link href="/funds">Funds</Link>
+          <Link className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white" href="/funds">Funds</Link>
         </div>
         <div>
-          <Link href="/buy">Buy</Link>
+          <Link className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white"   href="/buy">Buy</Link>
         </div>
         <div>
-          <Link href="/sell">Sell</Link>
+          <Link className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white" href="/sell">Sell</Link>
         </div>
         <div>
           <AuthLink />

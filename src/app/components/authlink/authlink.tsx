@@ -9,9 +9,9 @@ export default function AuthLink() {
     return ( 
         <div >
             {status === "unauthenticated" ? (
-                <Link href="/login">Login</Link>
+                <Link className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white" href="/login">Login</Link>
             ) : (   
-                <span  onClick={() => signOut()}>Logout</span>
+                <span className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white" onClick={() => signOut()}>Logout</span>
             )}
         </div>
     );

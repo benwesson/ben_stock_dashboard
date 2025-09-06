@@ -1,6 +1,4 @@
 "use server";
-import { unstable_cache } from 'next/cache'
-
 import { prisma } from "@/utils/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
@@ -56,9 +54,9 @@ export async function addFunds(email: string, funds: number) {
   });
 }
 
-const getFunds = unstable_cache(async (email?: string) => {
+export async function getFunds(email?: string) {
   const session = await getServerSession(authOptions);
-  
+
   const _email = session?.user?.email || email;
 
   if (!_email) {

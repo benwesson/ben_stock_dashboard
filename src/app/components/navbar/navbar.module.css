@@ -1,12 +1,17 @@
 .container {
-    background-color: grey;
+    display: flex;
+    background-color: black;
     position: sticky;
     top: 0;
+    height: 50px;
+    align-items: center;
+    justify-content: center;
 }
 
 .links {
     display: flex;
     gap: 10px;
-    justify-content: center;
+    
+    
 }
 
