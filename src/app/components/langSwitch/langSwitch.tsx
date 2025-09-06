@@ -23,6 +23,7 @@ export default function LanguageSelect({value}: Props) {
       >
         <option value="en">English</option>
         <option value="fr">French</option>
+        <option value="es">Spanish</option>
         {/* add more locales here */}
       </select>
     </form>

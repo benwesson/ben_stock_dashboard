@@ -6,6 +6,19 @@ import { findStocks,findDistinctTickers } from "@/api/prisma_api";
 import ShowFunds from "@/components/fundComponents/showFunds";
 import { fetchMultipleStocks } from "@/api/stock_api";
 
+// src
+// -- app
+// ---- (home)
+// ------ (auth)
+// -------- buy
+// -------- sell
+// -------- funds
+// -------- layout.tsx
+// -------- page.tsx
+// ---- login
+// ------ page.tsx
+// ---- layout.tsx
+
 export default async function TradePage() {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;

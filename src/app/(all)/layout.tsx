@@ -4,9 +4,9 @@ import "@/globals.css";
 import styles from "./home.module.css";
 import Navbar from "@/components/navbar/navbar";
 import AuthProvider from "@/providers/AuthProvider";
-import {NextIntlClientProvider} from 'next-intl';
-import {cookies} from 'next/headers';
-import LanguageSelect from '@/components/langSwitch/langSwitch';
+import { NextIntlClientProvider } from "next-intl";
+import { cookies } from "next/headers";
+import LanguageSelect from "@/components/langSwitch/langSwitch";
 
 const sourceSans3 = Source_Sans_3({
   subsets: ["latin"],
@@ -19,25 +19,24 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({
-  
- 
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = (await cookies()).get('locale')?.value ?? 'en';
+  const locale = (await cookies()).get("locale")?.value ?? "en";
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={sourceSans3.className}>
         <AuthProvider>
-          
-            <Navbar />
-            <div className={styles.container}>
-              <LanguageSelect value={locale} />
-              <div className={styles.main}><NextIntlClientProvider>{children}</NextIntlClientProvider></div>
-              
+          <Navbar />
+          <div className={styles.container}>
+            <LanguageSelect value={locale} />
+
+            <div className={styles.main}>
+              <NextIntlClientProvider>{children}</NextIntlClientProvider>
             </div>
-          
+          </div>
         </AuthProvider>
       </body>
     </html>

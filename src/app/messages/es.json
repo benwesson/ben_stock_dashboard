@@ -1,0 +1,21 @@
+{
+    "HomePage": {
+        "title": "Bienvenido a la página de inicio",
+        "content":"Este es el contenido de la página de inicio"
+    },
+    "ShowFunds": {
+        "funds": "Fondos actuales:"
+    },
+    
+    "Positions": {
+        "Ticker": "cotización bursátil",
+        "Quantity": "Cantidad",
+        "Bought At": "Comprado a",
+        "Current Price": "Precio actual",
+        "Gain/Loss": "Ganancia/Pérdida"
+    },
+    "PortfolioChart": {
+        "title":"Bienvenido a la página de inicio",
+        "Subtitle":"Seleccione una acción para ver su precio"
+    }
+}

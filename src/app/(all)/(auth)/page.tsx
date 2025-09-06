@@ -7,7 +7,7 @@ import { findStocks, findDistinctTickers } from "@/api/prisma_api";
 import { fetchMultipleStocks } from "@/api/stock_api";
 import PortfolioChart from "@/components/portfolioChart/portfolioChart"
 import {getTranslations} from 'next-intl/server';
-// {params,}:{params} Promise<{ lang: string }>
+
 export default async function TradePage() {
   
   const session = await getServerSession(authOptions);
@@ -17,11 +17,17 @@ export default async function TradePage() {
     return <div>Please sign in to buy stocks.</div>;
   }
 
-  const funds = await getFunds(email);
-  const stocks = (await findStocks(email).catch(() => [])) || [];
-
+  const fundsPromise = getFunds(email);
+  const stocksPromise = findStocks(email)
   // Build a distinct, uppercased ticker list from findDistinctTickers
-  const distinctTickersRaw = (await findDistinctTickers(email).catch(() => [])) || [];
+  const distinctTickersRawPromise = findDistinctTickers(email)
+
+  const [funds, stocks, distinctTickersRaw] = await Promise.all([
+    fundsPromise,
+    stocksPromise,
+    distinctTickersRawPromise,
+  ]);
+
   const tickers = Array.from(
     new Set(
       distinctTickersRaw
@@ -40,7 +46,6 @@ export default async function TradePage() {
 
   return (
     <>
-     
       <ShowFunds funds={funds} email={email} />
       <PortfolioChart stocks={stocks} stockPrices={stockPrices} />
       <Positions stocks={stocks} stockPrices={stockPrices} />

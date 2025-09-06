@@ -1,6 +1,5 @@
-"use client";
-import { useState } from "react";
 import Link from "next/link";
+
 import styles from "@/components/navbar/navbar.module.css";
 import AuthLink from "@/components/authlink/authlink";
 import {
@@ -10,8 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-export default function Navbar() {
-  const [locale, setLocale] = useState("en");
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/utils/authOptions";
+
+export default async function Navbar({ locale }: { locale: string }) {  
+  const session = await getServerSession(authOptions);
+
   return (
     <div className={styles.container}>
       <div className={styles.links}>
@@ -30,7 +33,6 @@ export default function Navbar() {
         <div>
           <AuthLink />
         </div>
-        
       </div>
     </div>
   );

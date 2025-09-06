@@ -1,8 +1,16 @@
 "use server";
+import { unstable_cache } from 'next/cache'
 
 import { prisma } from "@/utils/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/utils/authOptions";
 
-export async function createStock(ticker: string, quantity: number, price: number, userEmail: string) {
+export async function createStock(
+  ticker: string,
+  quantity: number,
+  price: number,
+  userEmail: string
+) {
   await prisma.stock.create({
     data: { ticker: ticker.toUpperCase(), quantity, price, userEmail },
   });
@@ -15,11 +23,15 @@ export async function findTicker(ticker: string, userEmail: string) {
   });
 }
 
-export async function updateStock(ticker: string, quantity: number,  userEmail: string) {
+export async function updateStock(
+  ticker: string,
+  quantity: number,
+  userEmail: string
+) {
   // updates all rows with this ticker
   await prisma.stock.updateMany({
-    where: { ticker: ticker.toUpperCase(), userEmail:userEmail},
-    data: { quantity,  userEmail },
+    where: { ticker: ticker.toUpperCase(), userEmail: userEmail },
+    data: { quantity, userEmail },
   });
 }
 
@@ -30,8 +42,6 @@ export async function findStocks(userEmail: string) {
     orderBy: { purchaseTime: "desc" },
   });
 }
-
-
 
 export async function deleteStock(ticker: string, userEmail: string) {
   await prisma.stock.deleteMany({
@@ -44,20 +54,29 @@ export async function addFunds(email: string, funds: number) {
     where: { email: email },
     data: { funds },
   });
-} 
+}
 
-export async function getFunds(email: string) {
+const getFunds = unstable_cache(async (email?: string) => {
+  const session = await getServerSession(authOptions);
+  
+  const _email = session?.user?.email || email;
+
+  if (!_email) {
+    throw new Error("User not authenticated");
+  }
+
   const user = await prisma.user.findUnique({
-    where: { email: email },
+    where: { email: _email },
     select: { funds: true },
   });
+
   return user?.funds || 0;
-} 
+}
 
 export async function findDistinctTickers(email: string) {
   return prisma.stock.findMany({
     where: { userEmail: email },
     select: { ticker: true },
-    distinct: ['ticker'],
+    distinct: ["ticker"],
   });
 }

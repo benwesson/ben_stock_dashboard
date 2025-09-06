@@ -8,12 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
+
 type FundProps = {
-  email: string;
   funds: number;
 };
 
-export default async function ShowFunds({ email, funds }: FundProps) {
+export default async function ShowFunds({ funds }: FundProps) {
   const t = await getTranslations("ShowFunds");
   try {
     return (

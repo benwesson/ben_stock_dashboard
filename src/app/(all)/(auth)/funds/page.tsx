@@ -4,7 +4,6 @@ import { getFunds } from "@/api/prisma_api";
 import ShowFunds from "@/components/fundComponents/showFunds";
 import FundForm from "@/components/fundComponents/fundForm";
 
-
 export default async function TradePage() {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
@@ -14,10 +13,8 @@ export default async function TradePage() {
 
     return (
       <>
-        
-            <ShowFunds funds={funds} email={email} />
-            <FundForm email={email} funds={funds} />
-     
+        <ShowFunds funds={funds} email={email} />
+        <FundForm email={email} funds={funds} />
       </>
     );
   } else {

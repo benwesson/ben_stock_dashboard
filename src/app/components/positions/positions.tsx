@@ -9,14 +9,14 @@ import {
 } from "@/components/ui/table";
 import {
   Card,
-  CardAction, 
+  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {getTranslations} from 'next-intl/server';
+import { getTranslations } from "next-intl/server";
 
 type Stock = { id: number; ticker: string; quantity: number; price: number };
 type StockPrices = { [key: string]: { data: { close: number }[] } };
