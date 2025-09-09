@@ -7,7 +7,6 @@ import { authOptions } from "@/utils/authOptions";
 
 
 export async function handleSearch(formData: FormData) {
-  // // const formData = new FormData(event.currentTarget);
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
   console.log("User email from session:", email);
@@ -58,7 +57,8 @@ export async function handleSearch(formData: FormData) {
   try {
     const validatedInput = SearchSchema.safeParse(dataToValidate);
     console.log("Validated Input:", validatedInput);
-    return validatedInput;
+
+    return validatedInput.success ? [validatedInput.data] : [];
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.log(error);
