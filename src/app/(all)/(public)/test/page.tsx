@@ -3,6 +3,7 @@ import { fetchStock } from "@/actions/stock_api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
+import { handleSearch } from "@/actions/formValidation";
 import {
   createStock,
   findTicker,
@@ -20,12 +21,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const schema = z.object({
-  ticker: z.string().min(1, "Ticker is required"),
-  quantity: z.number().min(1, "Quantity must be at least 1"),
 
-});
 
 export default function TestPage() {
-  return <div>Test Page</div>;
+  // Wrap handleSearch to ensure it returns Promise<void>
+  const handleFormAction = async (formData: FormData) => {
+    await handleSearch(formData);
+    // Optionally handle result or errors here
+  };
+
+  return (
+    <form action={handleFormAction}>
+      <input type="text" name="ticker" placeholder="Ticker" required/>
+      <button type="submit">Search</button>
+    </form>
+  );
 }
