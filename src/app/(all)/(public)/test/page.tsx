@@ -50,11 +50,11 @@ export default function TestPage() {
         <input type="text" name="ticker" placeholder="Ticker" required/>
         <button type="submit">Search</button>
       </form>
-      <div>Ticker: {stockData[0]?.ticker}</div>
-      <div>Stock Price: {stockData[0]?.stockPrice}</div>
-      <div>Total Shares Owned: {stockData[0]?.totalSharesOwned}</div>
-      <div>Account Stocks: {stockData[0]?.accountStocks}</div>
-      <div>Buy Orders: {stockData[0]?.buyOrders}</div>
+      <div>Ticker: {stockData?.[0]?.ticker}</div>
+      <div>Stock Price: {stockData?.[0]?.stockPrice}</div>
+      <div>Total Shares Owned: {stockData?.[0]?.totalSharesOwned}</div>
+      <div>Account Stocks: {stockData?.[0]?.accountStocks}</div>
+      <div>Buy Orders: {stockData?.[0]?.buyOrders}</div>
     </>
   );
 }
