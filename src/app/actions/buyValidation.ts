@@ -1,11 +1,18 @@
 "use server";
 import { z } from "zod";
 import { fetchStock } from "@/actions/stock_api";
-import { findTicker, findDistinctTickers,  } from "@/actions/prisma_api";
+import {
+  findTicker,
+  findDistinctTickers,
+  addFunds,
+  getFunds,
+  createStock,
+} from "@/actions/prisma_api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 
 //Define Zod schema for validation
+
 const validationSchema = z.object({
   ticker: z
     .string()
@@ -23,6 +30,11 @@ const validationSchema = z.object({
     .max(4, "You can only own 4 different stocks")
     .optional(),
   buyOrders: z.number().max(3, "Quantity must be at most 3").optional(),
+  quantity: z
+    .number()
+    .min(1, "Quantity must be at least 1")
+    .max(100, "Quantity must be at most 100")
+    .optional(),
 });
 
 export type SearchProps = z.infer<typeof validationSchema>;
@@ -34,6 +46,7 @@ export interface SearchActionState extends SearchProps {
     totalSharesOwned?: string[];
     accountStocks?: string[];
     buyOrders?: string[];
+    quantity?: string[];
   };
 }
 
@@ -70,10 +83,22 @@ async function validateFetch(ticker: string) {
   }
 }
 
-export async function handleSearch(
-  _prevState: SearchProps,
-  formData: FormData
-): Promise<SearchActionState> {
+async function validateQuantity(quantity: FormDataEntryValue | null) {
+  try {
+    validationSchema.parse({ quantity });
+
+    return true;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error("Validation Errors:", error.issues);
+    }
+
+    return false;
+  }
+}
+
+export async function handleBuy(formData: FormData) {
+
   //Get user email to see who is logged in
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
@@ -84,18 +109,32 @@ export async function handleSearch(
   }
 
   //Get ticker from input in form
-  const formTicker = formData.get("ticker");
+    const formTicker = formData.get("ticker");
 
   //Make sure ticker is a valid string
   const isValidTicker = validateTicker(formTicker);
 
+  //Get quantity from input in form
+  const formQuantity = formData.get("quantity");
+
+  //Make sure quantity is a valid number
+  const isValidQuantity = await validateQuantity(formQuantity);
+
   //If ticker is valid continue
-  if (isValidTicker) {
+  if (isValidTicker && isValidQuantity) {
     //Fetch stock from marketstack
     const _ticker = formTicker!.toString().toUpperCase();
+    const _quantity = Number(formQuantity);
 
-    const promises = [validateFetch(_ticker), findTicker(_ticker, email), findDistinctTickers(email)];
-    const [stock, existingTicker, distinctTickers] = await Promise.all(promises);
+    const promises = [
+      validateFetch(_ticker),
+      findTicker(_ticker, email),
+      findDistinctTickers(email),
+      getFunds(email),
+    ];
+    const [stock, existingTicker, distinctTickers, funds] = await Promise.all(
+      promises
+    );
 
     const stockPrice = stock?.close;
 
@@ -115,14 +154,36 @@ export async function handleSearch(
       (existingTicker[1]?.quantity ?? 0) +
       (existingTicker[2]?.quantity ?? 0);
 
+    //See if user has sufficent funds to make purchase
+    const orderPrice = stockPrice! * _quantity;
+
+    if (funds < orderPrice) {
+      return {
+        ticker: _ticker,
+        errors: { quantity: ["Insufficient funds for this purchase"] },
+      };
+    }
+
     //Package results from databse and form into object for validation
-    return {
+    const dataToValidate = {
       ticker: _ticker,
       stockPrice: stockPrice,
       totalSharesOwned: totalSharesOwned,
       accountStocks: distinctTickers.length,
       buyOrders: buyOrders,
+      quantity: _quantity,
     };
+
+    try {
+      validationSchema.parse(dataToValidate);
+      const newFunds = funds - orderPrice;
+      await createStock(_ticker, stockPrice, _quantity, email);
+      await addFunds(email, newFunds);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.error("Validation Errors:", error.issues);
+      }
+    }
   }
 
   return {
