@@ -18,10 +18,10 @@ const initialFormState: SearchActionState = {
   ticker: "",
 };
 
-const initialBuyState = {
-  quantity: 0,
-  ticker: "",
-};
+// const initialBuyState = {
+//   quantity: 0,
+//   ticker: "",
+// };
 
 export default function TestPage() {
   const [state, formAction, pending] = useActionState(

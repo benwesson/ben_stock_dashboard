@@ -1,4 +1,4 @@
-import Positions from "@/components/positions/positions";
+ import Positions from "@/components/positions/positions";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import { getFunds } from "@/actions/prisma_api";

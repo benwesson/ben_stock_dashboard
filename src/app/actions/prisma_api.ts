@@ -78,3 +78,25 @@ export async function findDistinctTickers(email: string) {
     distinct: ["ticker"],
   });
 }
+
+export async function getQuantitiesByTicker() {
+  const session = await getServerSession(authOptions);
+  const email = session?.user?.email;
+  const rows = await prisma.stock.groupBy({
+    by: ["ticker"],
+    where: { userEmail: email },
+    _sum: { quantity: true },
+  });
+  return rows.map((r) => ({
+    ticker: r.ticker.toUpperCase(),
+    quantity: r._sum.quantity ?? 0,
+  }));
+}
+
+export async function getTotalSharesForTicker(ticker: string, userEmail: string) {
+  const agg = await prisma.stock.aggregate({
+    where: { userEmail, ticker: ticker.toUpperCase() },
+    _sum: { quantity: true },
+  });
+  return agg._sum.quantity ?? 0;
+}
