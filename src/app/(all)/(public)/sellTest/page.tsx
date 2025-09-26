@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { getQuantitiesByTicker } from "@/actions/prisma_api";
-import { findTicker, findDistinctTickers } from "@/actions/prisma_api";
+
+import PopulateSell from "@/actions/populateSell";
+import handleSell from "@/actions/sellActions";
 import {
   Card,
   CardAction,
@@ -21,21 +21,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default async function SellTestPage() {
-  const quantities = await getQuantitiesByTicker();
-  console.log("Quantities for ticker:", quantities);
+  const stocks = await PopulateSell();
+  console.log("Fetched stocks:", stocks);
 
   return (
     <Card className="mt-8">
+      <CardHeader>
+        <CardTitle>Sell Shares</CardTitle>
+        <CardDescription>
+          Enter the quantity of shares you want to sell.
+        </CardDescription>
+      </CardHeader>
       <CardContent>
-        <CardTitle className="mb-4">Sell Shares</CardTitle>
-        <form>
+        <form action={handleSell}>
           <Select>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select a stock to sell" />
             </SelectTrigger>
             <SelectContent>
-              {quantities.map((item) => (
-                <SelectItem key={item.ticker} value={item.ticker}>
+              {stocks.map((item) => (
+                <SelectItem
+                  key={item.id}
+                  value={`${item.ticker}-${item.id}`}
+                  name="orderID"
+                >
                   {item.ticker} - {item.quantity}
                 </SelectItem>
               ))}
@@ -48,6 +57,7 @@ export default async function SellTestPage() {
             min="1"
             max="100"
             className="mt-4 w-[180px]"
+            name="sharesToSell"
           />
           <Button type="submit" className="mt-4 ">
             Sell

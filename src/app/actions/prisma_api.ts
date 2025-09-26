@@ -24,12 +24,13 @@ export async function findTicker(ticker: string, userEmail: string) {
 export async function updateStock(
   ticker: string,
   quantity: number,
-  userEmail: string
+  userEmail: string,
+  id: number
 ) {
   // updates all rows with this ticker
   await prisma.stock.updateMany({
-    where: { ticker: ticker.toUpperCase(), userEmail: userEmail },
-    data: { quantity, userEmail },
+    where: { ticker: ticker.toUpperCase(), userEmail: userEmail, id: id },
+    data: { quantity },
   });
 }
 
@@ -41,7 +42,7 @@ export async function findStocks(userEmail: string) {
   });
 }
 
-export async function deleteStock(ticker: string, userEmail: string) {
+export async function deleteStock(ticker: string, userEmail: string, id: number) {
   await prisma.stock.deleteMany({
     where: { ticker: ticker.toUpperCase(), userEmail: userEmail },
   });
@@ -99,4 +100,11 @@ export async function getTotalSharesForTicker(ticker: string, userEmail: string)
     _sum: { quantity: true },
   });
   return agg._sum.quantity ?? 0;
+}
+
+export async function findStockOrder (id: number, userEmail: string) {
+  return prisma.stock.findFirst({
+    where: { id, userEmail },
+    select: { ticker: true, quantity: true, price: true, id: true },
+  });
 }
