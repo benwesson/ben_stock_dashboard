@@ -1,4 +1,4 @@
-"use server";
+
 import { z } from "zod";
 import { fetchStock } from "@/actions/stock_api";
 import {
@@ -12,7 +12,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 
 //Define Zod schema for validation
-
 const validationSchema = z.object({
   ticker: z
     .string()

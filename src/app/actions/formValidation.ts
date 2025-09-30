@@ -53,7 +53,7 @@ function validateTicker(ticker: FormDataEntryValue | null) {
 
 async function validateFetch(ticker: string) {
   try {
-    const stock = await fetchStock(ticker);
+    const stock = await fetchStock(ticker, 1);
     const stockData = stock?.data?.[0];
 
     if (!stockData) {
@@ -80,7 +80,10 @@ export async function handleSearch(
   console.log("User email from session:", email);
 
   if (!email) {
-    throw new Error("User not authenticated");
+    return {
+      ticker: "",
+      errors: { ticker: ["User email not found in session"] },
+    };
   }
 
   //Get ticker from input in form

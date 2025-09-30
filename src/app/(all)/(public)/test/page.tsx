@@ -1,9 +1,10 @@
 "use client";
 import { useActionState } from "react";
-
+import ServerActionTest from "@/actions/testAction";
 import { handleSearch } from "@/actions/formValidation";
 import { handleBuy } from "@/actions/buyValidation";
 import type { SearchActionState } from "@/actions/formValidation";
+import NestPage from "../actionState/page";
 import {
   Card,
   CardAction,
@@ -29,12 +30,6 @@ export default function TestPage() {
     initialFormState
   );
 
-
-
- 
-
- 
-
   return (
     <Card className="mt-8">
       <CardContent>
@@ -53,12 +48,13 @@ export default function TestPage() {
         ) : (
           state.ticker && (
             <>
+              
               <div>Ticker: {state.ticker}</div>
               <div>Stock Price: {state.stockPrice}</div>
               <div>Total Shares Owned: {state.totalSharesOwned}</div>
               <div>Account Stocks: {state.accountStocks}</div>
               <div>Buy Orders: {state.buyOrders}</div>
-              <form action={handleBuy}>
+              <form action={ServerActionTest}>
                 <input
                   type="number"
                   name="quantity"

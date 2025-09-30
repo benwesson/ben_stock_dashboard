@@ -93,11 +93,12 @@ export async function testCache() {
 
 
 
-export async function fetchStock(stockTicker) {
-  const url = `https://api.marketstack.com/v1/eod?access_key=${process.env.NEXT_PUBLIC_MARKETSTACK_API_KEY}&symbols=${stockTicker}&limit=100`;
+export async function fetchStock(stockTicker, limit = 100) {
+  const url = `https://api.marketstack.com/v1/eod?access_key=${process.env.NEXT_PUBLIC_MARKETSTACK_API_KEY}&symbols=${stockTicker}&limit=${limit}`;
   const options = {
     method: "GET",
-    next: { revalidate: 3600 }
+    next: { revalidate: 3600 },
+    
   };
     
   try {
