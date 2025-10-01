@@ -138,9 +138,10 @@ export default async function ServerActionTest(formData: FormData) {
 
   const canPurchase = validateBackendData(validTicker, distinctTickers, buyOrders);
   if (!canPurchase.success) {
+    console.error("Backend validation failed:", canPurchase.errors);
     return {
       ticker: "",
-      errors: canPurchase.errors, // preserve specific error key
+      errors: { ticker: ["You already own 4 different stocks"] }
     };
   }
   await createStock(validTicker, validQuantity, stockPrice, email);
