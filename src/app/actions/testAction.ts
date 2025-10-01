@@ -55,17 +55,27 @@ function validateBackendData(
   distinctTickers: { ticker: string }[],
   buyOrders: number
 ) {
+  const upperTicker = ticker.toUpperCase();
+  const ownedSet = new Set(
+    distinctTickers.map((t) => t.ticker.toUpperCase())
+  );
+  const isExisting = ownedSet.has(upperTicker);
+
   if (buyOrders >= 3) {
     return {
       success: false,
-      errors: { buyOrders: ["User cannot have more than 3 buy orders"] },
+      errors: {
+        buyOrders: ["User cannot have more than 3 buy orders for this ticker"],
+      },
     };
   }
 
-  if (!(ticker in distinctTickers) && distinctTickers.length >= 4) {
+  if (!isExisting && ownedSet.size >= 4) {
     return {
       success: false,
-      errors: { distinctTickers: ["User cannot own more than 4 distinct stocks"] },
+      errors: {
+        distinctTickers: ["User cannot own more than 4 distinct stocks"],
+      },
     };
   }
 
@@ -127,12 +137,10 @@ export default async function ServerActionTest(formData: FormData) {
   console.log("Distinct stocks owned:", accountStocks);
 
   const canPurchase = validateBackendData(validTicker, distinctTickers, buyOrders);
-  console.log("Is backend data valid?", canPurchase);
-
-  if (canPurchase.success === false) {
+  if (!canPurchase.success) {
     return {
       ticker: "",
-      errors: { ticker: ["User cannot purchase more stocks"] },
+      errors: canPurchase.errors, // preserve specific error key
     };
   }
   await createStock(validTicker, validQuantity, stockPrice, email);
