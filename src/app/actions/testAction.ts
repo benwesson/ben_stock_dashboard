@@ -1,7 +1,11 @@
 "use server";
-import { z } from "zod";
+import { success, z } from "zod";
 
-import { findTicker, findDistinctTickers, createStock } from "@/actions/prisma_api";
+import {
+  findTicker,
+  findDistinctTickers,
+  createStock,
+} from "@/actions/prisma_api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import validateFetch from "@/validation/validateFetch";
@@ -18,11 +22,7 @@ const validationSchema = z.object({
     .regex(/^\d+$/, "Quantity must be a number")
     .min(1, "Quantity is required")
     .optional(),
-  accountStocks: z
-    .number()
-    .max(4, "You can only own 4 different stocks")
-    .optional(),
-  buyOrders: z.number().max(3, "Quantity must be at most 3").optional(),
+  
 });
 
 export type BuyProps = z.infer<typeof validationSchema>;
@@ -51,19 +51,29 @@ function validateFormData(ticker: string | null, quantity: string | null) {
 }
 
 function validateBackendData(
-  accountStocks: number | null,
-  buyOrders: number | null
+  ticker: string,
+  distinctTickers: { ticker: string }[],
+  buyOrders: number
 ) {
-  try {
-    validationSchema.parse({ accountStocks, buyOrders });
-    return true;
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.error("Validation Errors:", error.issues);
-    }
-    return false;
+  if (buyOrders >= 3) {
+    return {
+      success: false,
+      errors: { buyOrders: ["User cannot have more than 3 buy orders"] },
+    };
   }
+
+  if (!(ticker in distinctTickers) && distinctTickers.length >= 4) {
+    return {
+      success: false,
+      errors: { distinctTickers: ["User cannot own more than 4 distinct stocks"] },
+    };
+  }
+
+  return { success: true };
 }
+
+ 
+
 
 export default async function ServerActionTest(formData: FormData) {
   //Get user email to see who is logged in
@@ -72,7 +82,10 @@ export default async function ServerActionTest(formData: FormData) {
   console.log("User email from session:", email);
 
   if (!email) {
-    return "User not authenticated";
+    return {
+      ticker: "",
+      errors: { ticker: ["User email not found in session"] },
+    };
   }
 
   const formQuantity = formData.get("quantity") as string;
@@ -83,7 +96,10 @@ export default async function ServerActionTest(formData: FormData) {
   console.log("Is form data valid?", isValidData);
 
   if (!isValidData) {
-    return false;
+    return {
+      ticker: "",
+      errors: { ticker: ["invalid form data"] },
+    };
   }
 
   const validTicker = formTicker.toString().toUpperCase();
@@ -97,30 +113,29 @@ export default async function ServerActionTest(formData: FormData) {
   const [stock, existingTicker, distinctTickers] = await Promise.all(promises);
 
   if (!stock) {
-    console.error("No stock data found for ticker:", validTicker);
-    return false;
+    return {
+      ticker: "",
+      errors: { ticker: ["No stock data found for ticker"] },
+    };
   }
 
   const stockPrice = stock?.close;
   console.log("Stock price for", validTicker, "is", stockPrice);
   const buyOrders = existingTicker.length;
-    console.log("Existing buy orders for", validTicker, ":", buyOrders);
+  console.log("Existing buy orders for", validTicker, ":", buyOrders);
   const accountStocks = distinctTickers.length;
-    console.log("Distinct stocks owned:", accountStocks);
+  console.log("Distinct stocks owned:", accountStocks);
 
-  const canPurchase = validateBackendData(accountStocks, buyOrders);
+  const canPurchase = validateBackendData(validTicker, distinctTickers, buyOrders);
   console.log("Is backend data valid?", canPurchase);
-  if (!canPurchase) {
-    console.error("User cannot purchase more stocks");
-    return false;
+
+  if (canPurchase.success === false) {
+    return {
+      ticker: "",
+      errors: { ticker: ["User cannot purchase more stocks"] },
+    };
   }
-  await createStock(
-    validTicker,
-    validQuantity,
-    stockPrice,
-    email
-  );
-  return true;
-
-
+  await createStock(validTicker, validQuantity, stockPrice, email);
+  console.log("Purchase recorded in database");
+  return { ticker: validTicker, errors: {} };
 }
