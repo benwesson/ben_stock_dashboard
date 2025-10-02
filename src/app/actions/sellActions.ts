@@ -1,88 +1,122 @@
 "use server";
 import { z } from "zod";
+import { findStockOrder, updateStock, deleteStock } from "@/actions/prisma_api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
-import { findStockOrder, addFunds, updateStock } from "@/actions/prisma_api";
-import { fetchStock } from "@/actions/stock_api";
 
 //Define Zod schema for validation
 const validationSchema = z.object({
   orderID: z
-    .number("The order ID must be a number")
+    .string()
+    .regex(/^\d+$/, "Order ID must be a number")
     .min(1, "Order ID is required"),
-  sharesToSell: z
-    .number("The shares to sell must be a number")
-    .min(1, "You must sell at least 1 share")
-    .max(100, "You can only sell 100 shares at a time"),
+
+  quantity: z
+    .string()
+    .regex(/^\d+$/, "Quantity must be a number")
+    .min(1, "Quantity is required"),
 });
 
-export async function populateSelectOptions() {
-  function validateSellInput(
-    orderID: FormDataEntryValue | null,
-    sharesToSell: FormDataEntryValue | null
-  ) {
-    try {
-      validationSchema.parse({ orderID, sharesToSell });
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        console.error("Validation Errors:", error.issues);
-      }
-      return false;
+export type SellProps = z.infer<typeof validationSchema>;
+
+export interface SellActionState extends SellProps {
+  errors?: {
+    orderID?: string[];
+    quantity?: string[];
+  };
+}
+
+function validateFormData(orderID: string | null, quantity: string | null) {
+  try {
+    validationSchema.parse({ orderID, quantity });
+
+    return true;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error("Validation Errors:", error.issues);
     }
+
+    return false;
+  }
+}
+
+async function validateBackendData(
+  orderID: number,
+  quantity: number,
+  email: string
+) {
+  const orderData = await findStockOrder(orderID, email);
+  if (!orderData) {
+    console.error("No order data found for order ID:", orderID);
+    return {
+      success: false,
+      errors: {
+        orderID: ["No order data found for this order ID"],
+      },
+    };
   }
 
-  //Get user email to see who is logged in
+  if (quantity > orderData.quantity || orderData.quantity <= 0) {
+    return {
+      success: false,
+      errors: {
+        quantity: ["Insufficient quantity to sell"],
+      },
+    };
+  } else if (quantity == orderData.quantity) {
+    await deleteStock(email, orderID);
+    return {
+      success: true,
+      message: "All shares sold, order deleted",
+    };
+  }
+  // If partial sell, update the stock quantity
+  const saleQuantity = orderData.quantity - quantity;
+  await updateStock(saleQuantity, email, orderID);
+  return { success: true };
+}
+export default async function sellAction(formData: FormData) {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
   console.log("User email from session:", email);
 
   if (!email) {
-    throw new Error("User not authenticated");
+    return {
+      ticker: "",
+      errors: { ticker: ["User email not found in session"] },
+    };
   }
 
-  //Get ticker from input in form
-  const formOrderID = formData.get("orderID");
+  const orderID = formData.get("orderIDToSell") as string;
+  const quantity = formData.get("sharesToSell") as string;
+  console.log("Order ID to sell:", orderID);
+  console.log("Quantity of shares to sell:", quantity);
 
-  //Get quantity of shares to sell
-  const formQuantity = formData.get("sharesToSell");
+  const isValidData = validateFormData(orderID, quantity);
 
-  //Parse form data with zod schema
-  const isValidData = validateSellInput(formOrderID, formQuantity);
-
-  //If data is correct type continue
-  if (isValidData) {
-    const promises = [findStockOrder(formOrderID, email)];
-    const [stockOrder] = await Promise.all(promises);
-
-    if (!stockOrder) {
-      console.error("No stocks found for user:", email);
-    }
-
-    const ownedShares = stockOrder!.quantity;
-    const ticker = stockOrder!.ticker;
-    const sharesToSell = Number(formQuantity);
-
-    //Check if user owns enough shares to sell
-    if (ownedShares < sharesToSell) {
-      throw new Error(
-        `You cannot sell more shares than you own. You own ${ownedShares} shares of ${ticker}.`
-      );
-    }
-
-    //Fetch current stock price for ticker
-    const stockData = await fetchStock(ticker);
-    const currentPrice = stockData?.data?.[0]?.price;
-
-    const fundsToAdd = Number((currentPrice * sharesToSell).toFixed(2));
-    try {
-      await updateStock(ticker, ownedShares - sharesToSell, email, formOrderID);
-      console.log(
-        `Sold ${sharesToSell} shares of ${ticker} at $${currentPrice} each for a total of $${fundsToAdd}.`
-      );
-      await addFunds(email, fundsToAdd);
-    } catch (error) {
-      console.error("Error selling stock:", error);
-    }
+  if (!isValidData) {
+    return {
+      orderID: "",
+      errors: { orderID: ["invalid form data"] },
+    };
   }
+
+  console.log("Is form data valid?", isValidData);
+  const validOrderID = parseInt(orderID, 10);
+  const validQuantity = parseInt(quantity, 10);
+  const isValidBackend = await validateBackendData(
+    validOrderID,
+    validQuantity,
+    email
+  );
+  console.log("Backend validation result:", isValidBackend);
+  if (!isValidBackend.success) {
+    return {
+      orderID: "",
+      errors: isValidBackend.errors,
+    };
+  }
+  console.log("Is backend data valid?", isValidBackend.success);
+
+  console.log("Stock updated successfully");
 }

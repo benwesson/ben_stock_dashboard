@@ -1,69 +1,28 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/utils/authOptions";
+import SellComponent from '@/components/sellPage/SellComponent';
+import {fetchMultipleStocks} from '@/actions/stock_api';
+import { findDistinctTickers, findStocks } from '@/actions/prisma_api';
 
-import PopulateSell from "@/actions/populateSell";
-import handleSell from "@/actions/sellActions";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
-export default async function SellTestPage() {
-  const stocks = await PopulateSell();
-  console.log("Fetched stocks:", stocks);
+export default async function SellTest() {
+  const session = await getServerSession(authOptions);
+  const email = session?.user?.email;
+  if (!email) {
+    return <div>Please sign in to sell stocks.</div>;
+  }
+  
+  // const distinctTickers = await findDistinctTickers(email);
+  const stockData = await findStocks(email);
+  if (stockData.length === 0) {
+    return <div>You do not own any stocks to sell.</div>;
+  }
+  
 
   return (
-    <Card className="mt-8">
-      <CardHeader>
-        <CardTitle>Sell Shares</CardTitle>
-        <CardDescription>
-          Enter the quantity of shares you want to sell.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form action={handleSell}>
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select a stock to sell" />
-            </SelectTrigger>
-            <SelectContent>
-              {stocks.map((item) => (
-                <SelectItem
-                  key={item.id}
-                  value={`${item.ticker}-${item.id}`}
-                  name="orderID"
-                >
-                  {item.ticker} - {item.quantity}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div>
 
-          <Input
-            type="number"
-            placeholder="Quantity to sell"
-            min="1"
-            max="100"
-            className="mt-4 w-[180px]"
-            name="sharesToSell"
-          />
-          <Button type="submit" className="mt-4 ">
-            Sell
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        <SellComponent stockData = {stockData} />
+
+    </div>
   );
 }
