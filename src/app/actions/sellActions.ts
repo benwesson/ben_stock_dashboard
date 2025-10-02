@@ -75,7 +75,7 @@ async function validateBackendData(
   await updateStock(saleQuantity, email, orderID);
   return { success: true };
 }
-export default async function sellAction(formData: FormData) {
+export default async function sellAction( prevState: SellActionState,formData: FormData) {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
   console.log("User email from session:", email);
@@ -119,4 +119,11 @@ export default async function sellAction(formData: FormData) {
   console.log("Is backend data valid?", isValidBackend.success);
 
   console.log("Stock updated successfully");
+
+  return {
+    orderID: String(orderID),
+    quantity: String(quantity),
+  
+    success: true
+  }
 }

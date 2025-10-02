@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useActionState } from "react";
+import { SellActionState } from "@/actions/sellActions";
 import sellAction from "@/actions/sellActions";
 import {
   Card,
@@ -29,11 +30,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+const initialFormState: SellActionState = {
+  orderID: "",
+  quantity: "",
+};
 export default function SellTestPage({
   stockData,
 }: {
   stockData: { ticker: string; quantity: number; price: number; id: number }[];
 }) {
+    const [state, formAction, pending] = useActionState(
+        sellAction,
+        initialFormState
+      );
   const [selectedStock, setSelectedStock] = useState<string>("");
   function handleChange(value: string) {
     setSelectedStock(value);
@@ -106,7 +115,7 @@ export default function SellTestPage({
                 ))}
               </TableBody>
             </Table>
-            <form action={sellAction}>
+            <form action={formAction}>
               <Input
                 type="number"
                 placeholder="Order ID to sell"
@@ -130,6 +139,23 @@ export default function SellTestPage({
               </Button>
               <Button>Sell All</Button>
             </form>
+            {pending ? (
+                      <div>Loading...</div>
+                    ) : state.errors ? (
+                      <div style={{ color: "red" }}>
+                        {Object.values(state.errors).map((error, index) => (
+                          <div key={index}>{error}</div>
+                        ))}
+                      </div>
+                    ) : (
+                      state.orderID && (
+                        <>
+                          <div>Order ID: {state.orderID}</div>
+                          
+                        </>
+                      )
+                    )}
+            
           </CardContent>
         </Card>
       )}
