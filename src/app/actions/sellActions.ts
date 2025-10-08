@@ -4,7 +4,7 @@ import { findStockOrder, updateStock, deleteStock, addFunds} from "@/actions/pri
 import { fetchStock } from "@/actions/stock_api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
-
+import validateFetch from "@/validation/validateFetch";
 
 //Define Zod schema for validation
 const validationSchema = z.object({
@@ -66,9 +66,17 @@ async function validateBackendData(
       },
     };
   }
-
-  const currentPrice = await fetchStock(orderData?.ticker,1)
-  
+  const stockData = await validateFetch(orderData.ticker); 
+  if (!stockData) {
+    return {
+      success: false,
+      errors: {
+        ticker: ["Invalid ticker symbol"],
+      },
+    };
+  }
+  const currentPrice = stockData.close;
+  console.log("Current Price:", currentPrice);
 
   if (quantity > orderData.quantity || orderData.quantity <= 0) {
     return {
@@ -80,7 +88,7 @@ async function validateBackendData(
   } else if (quantity == orderData.quantity) {
     await deleteStock(email, orderID);
     const funds = (currentPrice * quantity);
-    await addFunds(email, funds ? funds : 0);
+    await addFunds(email, funds );
     return {
       success: true,
       message: "All shares sold, order deleted",
@@ -90,7 +98,7 @@ async function validateBackendData(
   const saleQuantity = orderData.quantity - quantity;
   await updateStock(saleQuantity, email, orderID);
   const funds = (currentPrice * quantity);
-  await addFunds(email, funds ? funds : 0);
+  await addFunds(email, funds );
   return { success: true };
 }
 export default async function sellAction( prevState: SellActionState,formData: FormData): Promise<SellActionState> {
