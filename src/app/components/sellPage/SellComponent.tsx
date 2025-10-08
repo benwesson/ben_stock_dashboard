@@ -37,7 +37,7 @@ const initialFormState: SellActionState = {
 export default function SellTestPage({
   stockData,
 }: {
-  stockData: { ticker: string; quantity: number; price: number; id: number }[];
+  stockData: { id: number; ticker: string; quantity: number; boughtAt: number; currentPrice: number; summary: string }[];
 }) {
     const [state, formAction, pending] = useActionState(
         sellAction,
@@ -95,13 +95,15 @@ export default function SellTestPage({
             </CardDescription>
           </CardHeader>
           <CardContent>
+            
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Order ID</TableHead>
                   <TableHead>Quantity</TableHead>
-                  <TableHead>Purchased Price</TableHead>
+                  <TableHead>Purchase Price</TableHead>
                   <TableHead>Current Price</TableHead>
+                  <TableHead>Gain/Loss</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -109,13 +111,15 @@ export default function SellTestPage({
                   <TableRow key={stock.id}>
                     <TableCell>{stock.id}</TableCell>
                     <TableCell>{stock.quantity}</TableCell>
-                    <TableCell>{stock.price}</TableCell>
-                    <TableCell>temp</TableCell>
+                    <TableCell>{stock.boughtAt}</TableCell>
+                    <TableCell>{stock.currentPrice}</TableCell>
+                    <TableCell>{(stock.currentPrice - stock.boughtAt).toFixed(2)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
             <form action={formAction}>
+              <input type="hidden" name="currentPrice" value={filteredStocks[0]?.currentPrice} />
               <Input
                 type="number"
                 placeholder="Order ID to sell"

@@ -20,7 +20,7 @@ import axios from "axios";
 //   }
 // }
 
-export async function fetchMultipleStocks(tickers) {
+export async function fetchMultipleStocks(tickers, limit) {
   const results = {};
   const errors = {};
   let promises = [];
@@ -29,7 +29,7 @@ export async function fetchMultipleStocks(tickers) {
 
   for (let i = 0; i < tickers.length; i++) {
     const ticker = tickers[i];
-    promises.push(fetchStock(ticker));
+    promises.push(fetchStock(ticker, limit));
   }
 
   try {
