@@ -34,7 +34,7 @@ const initialFormState: SellActionState = {
   orderID: "",
   quantity: "",
 };
-export default function SellTestPage({
+export default function SellComponent({
   stockData,
 }: {
   stockData: { id: number; ticker: string; quantity: number; boughtAt: number; currentPrice: number; summary: string }[];
