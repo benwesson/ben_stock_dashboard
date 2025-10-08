@@ -1,3 +1,7 @@
+import { getTranslations } from "next-intl/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/utils/authOptions";
+import { getFunds } from "@/actions/prisma_api";
 import {
   Card,
   CardAction,
@@ -7,19 +11,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getTranslations } from "next-intl/server";
 
-type FundProps = {
-  funds: number;
-};
 
-export default async function ShowFunds({ funds }: FundProps) {
+
+export default async function ShowFunds() {
   const t = await getTranslations("ShowFunds");
+  const funds = await getFunds();
+ 
+
   try {
     return (
       <Card className="mt-8">
         <CardContent>
-          <div>{t("funds")} ${funds.toFixed(2)}</div>
+          {<div>{t("funds")} ${funds.toFixed(2)}</div>}
          
         </CardContent>
       </Card>
@@ -28,7 +32,7 @@ export default async function ShowFunds({ funds }: FundProps) {
     console.error("Error fetching funds:", error);
     return (
       <Card className="mt-8">
-        <CardContent>Error fetching funds for: {email}</CardContent>
+        <CardContent>Error fetching funds</CardContent>
       </Card>
     );
   }

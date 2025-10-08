@@ -1,6 +1,7 @@
 "use server";
 import { z } from "zod";
-import { findStockOrder, updateStock, deleteStock, addFunds } from "@/actions/prisma_api";
+import { findStockOrder, updateStock, deleteStock, addFunds} from "@/actions/prisma_api";
+import { fetchStock } from "@/actions/stock_api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 
@@ -51,10 +52,11 @@ function validateFormData(orderID: string | null, quantity: string | null) {
 async function validateBackendData(
   orderID: number,
   quantity: number,
-  currentPrice: number,
+  
   email: string
 ) {
   const orderData = await findStockOrder(orderID, email);
+  
   if (!orderData) {
     console.error("No order data found for order ID:", orderID);
     return {
@@ -65,6 +67,9 @@ async function validateBackendData(
     };
   }
 
+  const currentPrice = await fetchStock(orderData?.ticker,1)
+  
+
   if (quantity > orderData.quantity || orderData.quantity <= 0) {
     return {
       success: false,
@@ -74,6 +79,8 @@ async function validateBackendData(
     };
   } else if (quantity == orderData.quantity) {
     await deleteStock(email, orderID);
+    const funds = (currentPrice * quantity);
+    await addFunds(email, funds ? funds : 0);
     return {
       success: true,
       message: "All shares sold, order deleted",
@@ -82,6 +89,8 @@ async function validateBackendData(
   // If partial sell, update the stock quantity
   const saleQuantity = orderData.quantity - quantity;
   await updateStock(saleQuantity, email, orderID);
+  const funds = (currentPrice * quantity);
+  await addFunds(email, funds ? funds : 0);
   return { success: true };
 }
 export default async function sellAction( prevState: SellActionState,formData: FormData): Promise<SellActionState> {
@@ -98,7 +107,7 @@ export default async function sellAction( prevState: SellActionState,formData: F
 
   const orderID = formData.get("orderIDToSell") as string;
   const quantity = formData.get("sharesToSell") as string;
-  const currentPrice = formData.get("currentPrice") as string;
+  
   console.log("Order ID to sell:", orderID);
   console.log("Quantity of shares to sell:", quantity);
 
@@ -114,11 +123,11 @@ export default async function sellAction( prevState: SellActionState,formData: F
   console.log("Is form data valid?", isValidData);
   const validOrderID = parseInt(orderID, 10);
   const validQuantity = parseInt(quantity, 10);
-  const validCurrentPrice = parseFloat(currentPrice);
+  
+
   const isValidBackend = await validateBackendData(
     validOrderID,
     validQuantity,
-    validCurrentPrice,
     email
   );
   console.log("Backend validation result:", isValidBackend);
@@ -131,14 +140,12 @@ export default async function sellAction( prevState: SellActionState,formData: F
   console.log("Is backend data valid?", isValidBackend.success);
 
   console.log("Stock updated successfully");
-  const sale = (validCurrentPrice * validQuantity);
-  await addFunds(email, sale);
-  console.log(`Added $${sale.toFixed(2)} to user ${email}'s funds.`);
+  
+  // console.log(`Added $${sale.toFixed(2)} to user ${email}'s funds.`);
   return {
     orderID: String(orderID),
     quantity: String(quantity),
-    sale: sale.toFixed(2),
- 
+    
     success: true
   }
 }
