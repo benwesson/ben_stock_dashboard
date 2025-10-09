@@ -51,5 +51,11 @@
         "sellButton": "Vender",
         "loading": "Cargando...",
         "sellSuccess": "¡Orden de venta exitosa!"
+    },
+    "Navbar": {
+        "account": "Cuenta",
+        "funds": "Fondos",
+        "buy": "Comprar",
+        "sell": "Vender"
     }
 }

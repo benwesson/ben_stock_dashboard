@@ -52,6 +52,12 @@
         "sellButton": "Sell",
         "loading": "Loading...",
         "sellSuccess": "Sell order successful!"
+    },
+    "Navbar": {
+        "account": "Account",
+        "funds": "Funds",
+        "buy": "Buy",
+        "sell": "Sell"
     }
 }
        
