@@ -112,3 +112,22 @@ export async function fetchStock(stockTicker, limit = 100) {
   }
  
 }
+
+export async function fetchMultiTest(tickers, limit) {
+  const responses = await Promise.allSettled(
+    tickers.map((ticker) => fetchStock(ticker, limit))
+  );
+
+  const data = responses.reduce((acc, curr) => {
+    if (curr.status === "fulfilled") {
+      acc.push(curr.value);
+    } else {
+      console.error("Error fetching stock:", curr.reason);
+    }
+    return acc;
+  }, []);
+
+  return data;
+}
+
+  

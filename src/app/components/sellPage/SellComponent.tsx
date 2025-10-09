@@ -1,7 +1,7 @@
 "use client";
 import { useState, useActionState } from "react";
 import { SellActionState } from "@/actions/sellActions";
-import sellAction from "@/actions/sellActions";
+import sellAction from "@/actions/sell/sellActions";
 import {
   Card,
   CardAction,

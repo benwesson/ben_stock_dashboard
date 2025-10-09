@@ -1,11 +1,13 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import SellComponent from "@/components/sellPage/SellComponent";
-import { fetchMultipleStocks } from "@/actions/stock_api";
+import { fetchStock } from "@/actions/stock_api";
 import { findStocks } from "@/actions/prisma_api";
 import ShowFunds from "@/components/fundComponents/showFunds";
 
+
 export default async function SellTest() {
+   
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
   if (!email) {
@@ -20,25 +22,34 @@ export default async function SellTest() {
   const stockList = Array.from(
     new Set(stockData.map((s) => s.ticker.toUpperCase()))
   );
+  
+  // Map of TICKER -> latest close
+  const priceMap: Record<string, number> = {};
 
-  const priceResp = await fetchMultipleStocks(stockList,1);
-  if (!priceResp || !priceResp.data) {
-    return <div>Error fetching stock prices.</div>;
+  const promises: Promise<any>[] = [];
+  for (const ticker of stockList) {
+    promises.push(fetchStock(ticker, 1));
   }
 
-  const latestPrices: Record<string, number> = {};
-  for (const t of stockList) {
-    latestPrices[t] = priceResp.data[t]?.data?.[0]?.close ?? 0;
-  }
+  const stockInfoResponses = await Promise.all(promises);
+  stockInfoResponses.forEach((stockInfo, index) => {
+    const ticker = stockList[index];
+    const close = stockInfo?.data?.[0]?.close ?? 0;
+    priceMap[ticker] = close;
+  });
+
+  console.log("Price Map:", priceMap);
 
   const enrichedStockData = stockData.map((s) => {
-    const currentPrice = latestPrices[s.ticker.toUpperCase()] ?? 0;
+    const t = s.ticker.toUpperCase();
+    const currentPrice = priceMap[t] ?? 0;
     return {
       id: s.id, // keep id for stable keys
       ticker: s.ticker,
       quantity: s.quantity,
       boughtAt: s.price, // original purchase price
-      summary: `Ticker: ${s.ticker}, Quantity: ${s.quantity}, Bought At: ${s.price}`,
+      currentPrice,
+      summary: `Ticker: ${s.ticker}, Quantity: ${s.quantity}, Bought At: ${s.price}, Current Price: ${currentPrice}`,
     };
   });
 
