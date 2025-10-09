@@ -8,11 +8,14 @@
         
     },
     "Positions": {
-        "Ticker": "Ticker",
-        "Quantity": "Quantity",
-        "Bought At": "Bought At",
-        "Current Price": "Current Price",
-        "Gain/Loss": "Gain/Loss"
+        "accountSummary": "Account Summary",
+        "overview": "Overview of your current stock positions by order",
+        "orderId": "Order ID",
+        "ticker": "Ticker",
+        "shares": "Shares",
+        "purchasePrice": "Bought At",
+        "currentPrice": "Current Price",
+        "gainLoss": "Gain/Loss"
     },
     "PortfolioChart": {
         "title":"Welcome to the homepage",

@@ -1,4 +1,4 @@
-
+import { getTranslations } from "next-intl/server";
 import { SetupType } from "@/actions/general/setup";
 import {
   Table,
@@ -18,27 +18,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-export default function Positions({ data }: { data: SetupType }) {
+export default async function Positions({ data }: { data: SetupType }) {
+  const t = await getTranslations("Positions");
   if (data.success === false) {
     return <div>{data.message}</div>;
   }
   return (
     <Card className="mt-8">
       <CardHeader>
-          <CardTitle>Account Summary</CardTitle>
+          <CardTitle>{t("accountSummary")}</CardTitle>
           <CardDescription>
-            Overview of your current stock positions by order
+            {t("overview")}
           </CardDescription>
         </CardHeader>
       <CardContent>
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Order ID</TableHead>
-          <TableHead>Ticker</TableHead>
-          <TableHead>Shares</TableHead>
-          <TableHead>Purchase Price</TableHead>
-          <TableHead>Current Price</TableHead>
+          <TableHead>{t("orderId")}</TableHead>
+          <TableHead>{t("ticker")}</TableHead>
+          <TableHead>{t("shares")}</TableHead>
+          <TableHead>{t("purchasePrice")}</TableHead>
+          <TableHead>{t("currentPrice")}</TableHead>
+          <TableHead>{t("gainLoss")}</TableHead> 
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -50,6 +52,7 @@ export default function Positions({ data }: { data: SetupType }) {
               <TableCell>{position.quantity}</TableCell>
               <TableCell>{position.boughtAt}</TableCell>
               <TableCell>{position.currentPrice}</TableCell>
+              <TableCell>{position.currentPrice - position.boughtAt}</TableCell>
             </TableRow>
           ))}
       </TableBody>

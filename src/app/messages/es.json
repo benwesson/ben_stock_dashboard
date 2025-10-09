@@ -6,13 +6,15 @@
     "ShowFunds": {
         "funds": "Fondos actuales:"
     },
-    
     "Positions": {
-        "Ticker": "cotización bursátil",
-        "Quantity": "Cantidad",
-        "Bought At": "Comprado a",
-        "Current Price": "Precio actual",
-        "Gain/Loss": "Ganancia/Pérdida"
+        "accountSummary": "Resumen de la cuenta",
+        "overview": "Descripción general de sus posiciones de acciones actuales por orden",
+        "orderId": "ID de orden",
+        "ticker": "Ticker",
+        "shares": "Acciones",
+        "purchasePrice": "Comprado a",
+        "currentPrice": "Precio actual",
+        "gainLoss": "Ganancia/Pérdida"
     },
     "PortfolioChart": {
         "title":"Bienvenido a la página de inicio",

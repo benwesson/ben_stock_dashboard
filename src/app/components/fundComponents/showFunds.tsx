@@ -1,6 +1,4 @@
 import { getTranslations } from "next-intl/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/utils/authOptions";
 import { getFunds } from "@/actions/prisma_api";
 import {
   Card,
