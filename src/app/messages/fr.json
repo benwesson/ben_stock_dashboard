@@ -19,5 +19,19 @@
     "PortfolioChart": {
         "title": "Graphique de Portefeuille",
         "Subtitle": "Sélectionnez une action pour voir son prix"
+    },
+    "BuyComponent": {
+        "searchPlaceholder": "Entrez le symbole de l'action (ex: AAPL)",
+        "searchButton": "Rechercher",
+        "loading": "Chargement...",
+        "ticker": "Symbole",
+        "currentPrice": "Prix Actuel",
+        "shares": "Actions Possédées",
+        "accountStocks": "Actions du Compte",
+        "buyOrders": "Ordres d'Achat",
+        "buyPlaceholder": "Entrez le nombre d'actions",
+        "buyButton": "Acheter",
+        "processingPurchase": "Traitement de l'achat...",
+        "purchaseSuccess": "Achat réussi!"
     }
 }

@@ -20,5 +20,20 @@
     "PortfolioChart": {
         "title":"Welcome to the homepage",
         "Subtitle":"Select a stock to view its price"
+    },
+    "BuyComponent": {
+        
+        "searchPlaceholder": "Enter stock ticker (e.g., AAPL)",
+        "searchButton": "Search",
+        "loading": "Loading...",
+        "ticker": "Ticker",
+        "currentPrice": "Current Price",
+        "shares": "Shares Owned",
+        "accountStocks": "Account Stocks",
+        "buyOrders": "Buy Orders",  
+        "buyPlaceholder": "Enter number of shares",
+        "buyButton": "Buy",
+        "processingPurchase": "Processing purchase...",
+        "purchaseSuccess": "Purchase successful!"
     }
 }

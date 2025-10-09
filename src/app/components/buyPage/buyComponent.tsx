@@ -2,7 +2,7 @@
 import { useActionState, useState, useEffect } from "react";
 import { ServerActionTest, BuyActionState } from "@/actions/buy/buyAction";
 import  { SearchActionState, handleSearch } from "@/actions/buy/searchValidation";
-
+import { useTranslations } from "next-intl";
 import {
   Card,
   CardAction,
@@ -12,6 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "../ui/button";
 
 const initialFormState: SearchActionState = {
   ticker: "",
@@ -24,6 +26,7 @@ const initialBuyState: BuyActionState = {
 
 
 export default function BuyComponent() {
+  const t = useTranslations("BuyComponent");
   const [state, formAction, pending] = useActionState(handleSearch, initialFormState);
   const [buyState, buyAction, buyPending] = useActionState(ServerActionTest, initialBuyState);
   const [buySubmitted, setBuySubmitted] = useState(false);
@@ -35,11 +38,16 @@ export default function BuyComponent() {
     <Card className="mt-8">
       <CardContent>
         <form action={formAction}>
-          <input type="text" name="ticker" placeholder="Ticker" required />
-          <button type="submit">Search</button>
+          <div className="flex space-x-2">
+            <Input className="w-1/4" type="text" name="ticker" placeholder={t("searchPlaceholder")} required  />
+            <Button type="submit">{t("searchButton")}</Button>
+          </div>
         </form>
+
+        
+         
         {pending ? (
-          <div>Loading...</div>
+          <div>{t("loading")}</div>
         ) : state.errors ? (
           <div style={{ color: "red" }}>
             {Object.values(state.errors).map((error, index) => (
@@ -49,26 +57,26 @@ export default function BuyComponent() {
         ) : (
           state.ticker && (
             <>
-              <div>Ticker: {state.ticker}</div>
-              <div>Stock Price: {state.stockPrice}</div>
-              <div>Total Shares Owned: {state.totalSharesOwned}</div>
-              <div>Account Stocks: {state.accountStocks}</div>
-              <div>Buy Orders: {state.buyOrders}</div>
+              <div>{t("ticker")}: {state.ticker}</div>
+              <div>{t("currentPrice")}: {state.stockPrice}</div>
+              <div>{t("shares")}: {state.totalSharesOwned}</div>
+              <div>{t("accountStocks")}: {state.accountStocks}</div>
+              <div>{t("buyOrders")}: {state.buyOrders}</div>
               <form action={buyAction} onSubmit={() => setBuySubmitted(true)}>
                 <input
                   type="number"
                   name="quantity"
-                  placeholder="Quantity"
+                  placeholder={t("buyPlaceholder")}
                   min="1"
                   max="100"
                   required
                 />
-                <input type="hidden" name="ticker" value={state.ticker} /> 
-                <button type="submit">Buy</button>
+                <input type="hidden" name="ticker" value={state.ticker} />
+                <button type="submit">{t("buyButton")}</button>
               </form>
 
               {buyPending ? (
-                <div>Processing purchase...</div>
+                <div>{t("processingPurchase")}</div>
               ) : buySubmitted ? (
                 buyState.errors ? (
                   <div style={{ color: "red" }}>
@@ -77,7 +85,7 @@ export default function BuyComponent() {
                     ))}
                   </div>
                 ) : (
-                  <div>Purchase successful!</div>
+                  <div>{t("purchaseSuccess")}</div>
                 )
               ) : null}
             </>
