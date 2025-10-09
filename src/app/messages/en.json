@@ -35,5 +35,23 @@
         "buyButton": "Buy",
         "processingPurchase": "Processing purchase...",
         "purchaseSuccess": "Purchase successful!"
+    },
+    "SellComponent": {
+        "sellTitle": "Sell Shares",
+        "sellDescription": "Select an owned stock to sell shares of",
+        "selectPlaceholder": "Select a stock to sell",
+        "cardTitle": "Orders of",
+        "cardDescription": "Provide order ID to sell and quantity of shares to sell",
+        "orderId": "Order ID",
+        "quantity": "Quantity",
+        "purchasePrice": "Purchase Price",
+        "currentPrice": "Current Price",
+        "gainLoss": "Gain/Loss",
+        "orderIdPlaceholder": "Order ID to sell",
+        "quantityPlaceholder": "Quantity to sell",
+        "sellButton": "Sell",
+        "loading": "Loading...",
+        "sellSuccess": "Sell order successful!"
     }
 }
+       

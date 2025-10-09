@@ -33,5 +33,22 @@
         "buyButton": "Acheter",
         "processingPurchase": "Traitement de l'achat...",
         "purchaseSuccess": "Achat réussi!"
+    },
+    "SellComponent": {
+        "sellTitle": "Vendre des Actions",
+        "sellDescription": "Sélectionnez une action possédée pour vendre des actions de celle-ci",
+        "selectPlaceholder": "Sélectionnez une action à vendre",
+        "cardTitle": "Ordres de",
+        "cardDescription": "Fournissez l'ID de commande à vendre et la quantité d'actions à vendre",
+        "orderId": "ID de Commande",
+        "quantity": "Quantité",
+        "purchasePrice": "Prix d'Achat",
+        "currentPrice": "Prix Actuel",
+        "gainLoss": "Gain/Perte",
+        "orderIdPlaceholder": "ID de commande à vendre",
+        "quantityPlaceholder": "Quantité à vendre",
+        "sellButton": "Vendre",
+        "loading": "Chargement...",
+        "sellSuccess": "Ordre de vente réussi!"
     }
 }

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useActionState } from "react";
-import { SellActionState } from "@/actions/sellActions";
-import sellAction from "@/actions/sell/sellActions";
+import { SellActionState, sellAction } from "@/actions/sell/sellActions";
+import { useTranslations } from "next-intl";
 import {
   Card,
   CardAction,
@@ -39,6 +39,7 @@ export default function SellComponent({
 }: {
   stockData: { id: number; ticker: string; quantity: number; boughtAt: number; currentPrice: number; summary: string }[];
 }) {
+    const t = useTranslations("SellComponent");
     const [state, formAction, pending] = useActionState(
         sellAction,
         initialFormState
@@ -64,16 +65,16 @@ export default function SellComponent({
     <>
       <Card className="mt-8">
         <CardHeader>
-          <CardTitle>Sell Shares</CardTitle>
+          <CardTitle>{t("sellTitle")}</CardTitle>
           <CardDescription>
-            Select an owned stock to sell shares of
+            {t("sellDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form>
             <Select value={selectedStock} onValueChange={handleChange}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select a stock to sell" />
+                <SelectValue placeholder={t("selectPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {stockList.map((stock) => (
@@ -89,9 +90,9 @@ export default function SellComponent({
       {selectedStock && (
         <Card className="mt-8">
           <CardHeader>
-            <CardTitle>Orders of {selectedStock}:</CardTitle>
+            <CardTitle>{t("cardTitle")} {selectedStock}:</CardTitle>
             <CardDescription>
-              Provide order ID to sell and quantity of shares to sell
+              {t("cardDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -99,11 +100,11 @@ export default function SellComponent({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Order ID</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Purchase Price</TableHead>
-                  <TableHead>Current Price</TableHead>
-                  <TableHead>Gain/Loss</TableHead>
+                  <TableHead>{t("orderId")}</TableHead>
+                  <TableHead>{t("quantity")}</TableHead>
+                  <TableHead>{t("purchasePrice")}</TableHead>
+                  <TableHead>{t("currentPrice")}</TableHead>
+                  <TableHead>{t("gainLoss")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -122,7 +123,7 @@ export default function SellComponent({
               <input type="hidden" name="currentPrice" value={filteredStocks[0]?.currentPrice} />
               <Input
                 type="number"
-                placeholder="Order ID to sell"
+                placeholder={t("orderIdPlaceholder")}
                 min="1"
                 max="100"
                 className="mt-4 w-[180px]"
@@ -131,7 +132,7 @@ export default function SellComponent({
               />
               <Input
                 type="number"
-                placeholder="Quantity to sell"
+                placeholder={t("quantityPlaceholder")}
                 min="1"
                 max="100"
                 className="mt-4 w-[180px]"
@@ -139,12 +140,12 @@ export default function SellComponent({
                 required
               />
               <Button type="submit" className="mt-4 mr-4">
-                Sell
+                {t("sellButton")}
               </Button>
-              <Button>Sell All</Button>
+              {/* <Button>Sell All</Button> */}
             </form>
             {pending ? (
-                      <div>Loading...</div>
+                      <div>{t("loading")}</div>
                     ) : state.errors ? (
                       <div style={{ color: "red" }}>
                         {Object.values(state.errors).map((error, index) => (
@@ -154,7 +155,7 @@ export default function SellComponent({
                     ) : (
                       state.orderID && (
                         <>
-                          <div>Order ID: {state.orderID}</div>
+                          <div>{t("sellSuccess")}: {state.orderID}</div>
                           
                         </>
                       )

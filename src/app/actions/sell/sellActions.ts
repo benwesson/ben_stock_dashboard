@@ -1,7 +1,6 @@
 "use server";
 import { z } from "zod";
 import { findStockOrder, updateStock, deleteStock, addFunds} from "@/actions/prisma_api";
-import { fetchStock } from "@/actions/stock_api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import validateFetch from "@/validation/validateFetch";
@@ -101,7 +100,7 @@ async function validateBackendData(
   await addFunds(email, funds );
   return { success: true };
 }
-export default async function sellAction( prevState: SellActionState,formData: FormData): Promise<SellActionState> {
+export  async function sellAction( prevState: SellActionState,formData: FormData): Promise<SellActionState> {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
   console.log("User email from session:", email);
@@ -153,7 +152,6 @@ export default async function sellAction( prevState: SellActionState,formData: F
   return {
     orderID: String(orderID),
     quantity: String(quantity),
-    
     success: true
   }
 }
