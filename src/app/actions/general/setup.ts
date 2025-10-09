@@ -19,7 +19,7 @@ export type SetupType = Awaited<
       message: string;
     }
 >;
-export  async function setup() {
+export  async function setup(limit =1) {
    
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
@@ -41,7 +41,7 @@ export  async function setup() {
 
   const promises: Promise<any>[] = [];
   for (const ticker of stockList) {
-    promises.push(fetchStock(ticker, 1));
+    promises.push(fetchStock(ticker, limit));
   }
 
   const stockInfoResponses = await Promise.all(promises);

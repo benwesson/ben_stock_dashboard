@@ -1,140 +1,74 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
-import { useTranslations } from "next-intl"
-
-type Stock = { id: number; ticker: string; quantity: number; price: number }
-type StockPrices = { [key: string]: { data: { close: number; date: string }[] } }
-
-export type PortfolioSeries = {
-  name: string
-  data: { date: string; value: number }[]
-}
+import * as React from "react";
+import { useTranslations } from "next-intl";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import type { ChartDataType } from "@/actions/chartAction";
 
 type Props = {
-  stocks: Stock[]
-  stockPrices: StockPrices
-  mode?: "price" | "value" // price = close, value = close * totalQty per ticker
-  title?: string
-  description?: string
-}
+  data: ChartDataType;
+  title?: string;
+  description?: string;
+};
 
-// Aggregate total quantity per ticker (handles multiple lots)
-function aggregateQuantities(stocks: Stock[]) {
-  const map: Record<string, number> = {}
-  for (const s of stocks) {
-    const t = s.ticker.toUpperCase()
-    map[t] = (map[t] || 0) + Number(s.quantity || 0)
-  }
-  return map
-}
-
-// Build series from props
-function buildPortfolioSeries(
-  stocks: Stock[],
-  stockPrices: StockPrices,
-  mode: "price" | "value"
-): PortfolioSeries[] {
-  const qtyByTicker = aggregateQuantities(stocks)
-  const tickers = Object.keys(qtyByTicker)
-
-  return tickers
-    .map((ticker) => {
-      const prices = stockPrices[ticker]?.data || []
-      const qty = qtyByTicker[ticker] || 0
-      return {
-        name: ticker,
-        data: prices.map((d) => ({
-          date: d.date,
-          value: mode === "value" ? d.close * qty : d.close,
-        })),
-      }
-    })
-    // drop empty series
-    .filter((s) => s.data.length > 0)
-}
-
-// Flatten [{name, data:[{date,value}]}] -> [{date, [name]: value, ...}, ...]
-function flattenSeriesToRows(series: PortfolioSeries[]) {
-  const dateMap = new Map<string, Record<string, any>>()
-  for (const s of series) {
-    for (const pt of s.data) {
-      const key = pt.date
-      if (!dateMap.has(key)) dateMap.set(key, { date: key })
-      dateMap.get(key)![s.name] = pt.value
+// Build table rows: [{ date, TICKER1: close, TICKER2: close, ... }, ...]
+function buildRows(record: Record<string, { dates: string[]; closes: number[] }>) {
+  const byDate = new Map<string, Record<string, any>>();
+  for (const [ticker, series] of Object.entries(record)) {
+    const len = Math.min(series.dates.length, series.closes.length);
+    for (let i = 0; i < len; i++) {
+      const date = series.dates[i];
+      const close = Number(series.closes[i] ?? 0);
+      if (!byDate.has(date)) byDate.set(date, { date });
+      byDate.get(date)![ticker] = close;
     }
   }
-  return Array.from(dateMap.values()).sort(
+  return Array.from(byDate.values()).sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  )
+  );
 }
 
-// Dynamic ChartConfig
 function buildConfig(seriesNames: string[]): ChartConfig {
-  const palette = [
-    "var(--chart-1)",
-    "var(--chart-2)",
-    "var(--chart-3)",
-    "var(--chart-4)",
-    "var(--chart-5)",
-  ]
-  const cfg: ChartConfig = {
-    views: { label: "Stock price" },
-  } as ChartConfig
-
+  const palette = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
+  const cfg: ChartConfig = { views: { label: "Series" } } as ChartConfig;
   seriesNames.forEach((name, i) => {
     // @ts-expect-error dynamic keys allowed by ChartConfig shape
-    cfg[name] = { label: name, color: palette[i % palette.length] }
-  })
-  return cfg
+    cfg[name] = { label: name, color: palette[i % palette.length] };
+  });
+  return cfg;
 }
 
-export default function PortfolioChart({
-  stocks,
-  stockPrices,
-  mode = "price",
-  title,
-  description,
-}: Props) {
-  const t = useTranslations("PortfolioChart") // client i18n
-  const series = React.useMemo(
-    () => buildPortfolioSeries(stocks, stockPrices, mode),
-    [stocks, stockPrices, mode]
-  )
-  const seriesNames = React.useMemo(() => series.map((s) => s.name), [series])
-  const rows = React.useMemo(() => flattenSeriesToRows(series), [series])
-  const chartConfig = React.useMemo(() => buildConfig(seriesNames), [seriesNames])
+export default function PortfolioChart({ data, title, description }: Props) {
+  const t = useTranslations("PortfolioChart");
 
-  const [activeSeries, setActiveSeries] = React.useState<string>(seriesNames[0] || "")
+  if (!data || (("success" in data) && data.success === false)) {
+    const msg = (data as any)?.message || "Failed to load chart data.";
+    return <div>{msg}</div>;
+  }
+
+  // success path
+  const record = data.data;
+  const seriesNames = Object.keys(record);
+  if (seriesNames.length === 0) {
+    return <div>No series to display.</div>;
+  }
+
+  const rows = React.useMemo(() => buildRows(record), [record]);
+  const chartConfig = React.useMemo(() => buildConfig(seriesNames), [seriesNames]);
+  const [activeSeries, setActiveSeries] = React.useState<string>(seriesNames[0]);
 
   const totals = React.useMemo(() => {
-    const agg: Record<string, number> = {}
+    const agg: Record<string, number> = {};
     seriesNames.forEach((name) => {
-      agg[name] = rows.reduce((a, r) => a + (Number(r[name]) || 0), 0)
-    })
-    return agg
-  }, [rows, seriesNames])
+      agg[name] = rows.reduce((a, r) => a + (Number(r[name]) || 0), 0);
+    });
+    return agg;
+  }, [rows, seriesNames]);
 
-  const titleText = title ?? t("title")
-  const descText = description ?? t("Subtitle")
-
-  if (seriesNames.length === 0) {
-    return <div>No series to display.</div>
-  }
+  const titleText = title ?? t("title", { default: "Portfolio" });
+  const descText = description ?? t("Subtitle", { default: "Historical close per ticker" });
 
   return (
     <Card className="py-4 sm:py-0 mt-8 mb-8">
@@ -156,7 +90,7 @@ export default function PortfolioChart({
                 {chartConfig[name]?.label ?? name}
               </span>
               <span className="text-lg leading-none font-bold sm:text-2xl">
-                ${Math.round(totals[name] || 0).toLocaleString()}USD
+                ${Math.round(totals[name] || 0).toLocaleString()} USD
               </span>
             </button>
           ))}
@@ -173,18 +107,15 @@ export default function PortfolioChart({
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) =>
-                new Date(value).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })
+                new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" })
               }
             />
-            <YAxis tickMargin={8} tickLine={false} axisLine={false} />
+            <YAxis tickLine={false} axisLine={false} tickMargin={8} />
             <ChartTooltip
               content={
                 <ChartTooltipContent
-                  className="w-[150px]"
-                  nameKey="views"
+                  className="w-[180px]"
+                  nameKey={activeSeries}
                   labelFormatter={(value) =>
                     new Date(value).toLocaleDateString("en-US", {
                       month: "short",
@@ -200,12 +131,12 @@ export default function PortfolioChart({
               type="monotone"
               stroke={`var(--color-${activeSeries})`}
               strokeWidth={2}
-              dot={false}
+              dot={rows.length <= 64}
               isAnimationActive={false}
             />
           </LineChart>
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

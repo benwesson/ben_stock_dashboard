@@ -24,6 +24,12 @@ export default function Positions({ data }: { data: SetupType }) {
   }
   return (
     <Card className="mt-8">
+      <CardHeader>
+          <CardTitle>Account Summary</CardTitle>
+          <CardDescription>
+            Overview of your current stock positions by order
+          </CardDescription>
+        </CardHeader>
       <CardContent>
     <Table>
       <TableHeader>
