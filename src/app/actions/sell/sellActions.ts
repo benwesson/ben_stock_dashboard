@@ -11,12 +11,12 @@ const validationSchema = z.object({
   orderID: z
     .string()
     .regex(/^\d+$/, "Order ID must be a number")
-    .min(1, "Order ID is required").optional(),
+    .min(1, "Order ID is required"),
 
   quantity: z
     .string()
     .regex(/^\d+$/, "Quantity must be a number")
-    .min(1, "Quantity is required").optional(),
+    .min(1, "Quantity is required"),
 });
 
 export type SellProps = z.infer<typeof validationSchema>;

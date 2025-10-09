@@ -1,9 +1,7 @@
 "use client";
 import { useActionState } from "react";
 import ServerActionTest from "@/actions/buy/buyAction";
-import { handleSearch } from "@/actions/formValidation";
-
-import type { SearchActionState } from "@/actions/formValidation";
+import  { SearchActionState, handleSearch } from "@/actions/buy/formValidation";
 
 import {
   Card,
