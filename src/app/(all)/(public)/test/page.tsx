@@ -1,9 +1,9 @@
 "use client";
 import { useActionState } from "react";
 import ServerActionTest from "@/actions/buyAction";
-import { handleSearch } from "@/actions/buy/formValidation";
+import { handleSearch } from "@/actions/buy/searchValidation";
 import { handleBuy } from "@/actions/buyValidation";
-import type { SearchActionState } from "@/actions/buy/formValidation";
+import type { SearchActionState } from "@/actions/buy/searchValidation";
 import NestPage from "../actionState/page";
 import {
   Card,

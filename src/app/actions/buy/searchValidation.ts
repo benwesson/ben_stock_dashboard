@@ -20,7 +20,7 @@ const validationSchema = z.object({
     .optional(),
   accountStocks: z
     .number()
-    .max(4, "You can only own 4 different stocks")
+   
     .optional(),
   buyOrders: z.number().max(3, "Quantity must be at most 3").optional(),
 });

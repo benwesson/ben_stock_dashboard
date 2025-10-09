@@ -85,7 +85,7 @@ function validateBackendData(
  
 
 
-export default async function ServerActionTest(formData: FormData) {
+export  async function ServerActionTest(prevState: BuyActionState,formData: FormData): Promise<BuyActionState> {
   //Get user email to see who is logged in
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
@@ -114,6 +114,12 @@ export default async function ServerActionTest(formData: FormData) {
 
   const validTicker = formTicker.toString().toUpperCase();
   const validQuantity = Number(formQuantity);
+  if (validQuantity <= 0 || validQuantity > 100) {
+    return {
+      ticker: "",
+      errors: { quantity: ["Quantity must be between 1 and 100"] },
+    };
+  }
 
   const promises = [
     validateFetch(validTicker),
@@ -141,7 +147,7 @@ export default async function ServerActionTest(formData: FormData) {
     console.error("Backend validation failed:", canPurchase.errors);
     return {
       ticker: "",
-      errors: { ticker: ["You already own 4 different stocks"] }
+      errors: {...canPurchase.errors },
     };
   }
   await createStock(validTicker, validQuantity, stockPrice, email);
