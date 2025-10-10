@@ -44,8 +44,6 @@ export default function BuyComponent() {
           </div>
         </form>
 
-        
-         
         {pending ? (
           <div>{t("loading")}</div>
         ) : state.errors ? (

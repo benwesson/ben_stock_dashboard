@@ -57,7 +57,10 @@
         "account": "Account",
         "funds": "Funds",
         "buy": "Buy",
-        "sell": "Sell"
+        "sell": "Sell",
+        "login": "Login",
+        "logout": "Logout"
     }
+   
 }
        

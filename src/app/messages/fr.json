@@ -55,6 +55,9 @@
         "account": "Compte",
         "funds": "Fonds",
         "buy": "Acheter",
-        "sell": "Vendre"
+        "sell": "Vendre",
+        "login": "Connexion",
+        "logout": "Déconnexion"
     }
+   
 }

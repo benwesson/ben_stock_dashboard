@@ -34,7 +34,7 @@ export default async function Navbar({ locale }: { locale: string }) {
           <Link className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white" href="/sell">{t("sell")}</Link>
         </div>
         <div>
-          <AuthLink />
+          <AuthLink loginText={t("login")} logoutText={t("logout")} />
         </div>
       </div>
     </div>
