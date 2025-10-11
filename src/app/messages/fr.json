@@ -58,6 +58,12 @@
         "sell": "Vendre",
         "login": "Connexion",
         "logout": "Déconnexion"
+    },
+    "DepositFunds": {
+        "title": "Déposer des Fonds",
+        "description": "Ajoutez des fonds à votre compte",
+        "amountPlaceholder": "Entrez le montant à déposer",
+        "depositButton": "Déposer" 
     }
    
 }

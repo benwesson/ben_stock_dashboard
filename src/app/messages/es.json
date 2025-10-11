@@ -59,6 +59,13 @@
         "sell": "Vender",
         "login": "Iniciar sesión",
         "logout": "Cerrar sesión"
+    },
+    "DepositFunds": {
+        "title": "Depositar fondos",
+        "description": "Agregue fondos a su cuenta",
+        "amountPlaceholder": "Ingrese la cantidad a depositar",
+        "depositButton": "Depositar"
+        
     }
   
 }

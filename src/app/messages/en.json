@@ -60,6 +60,13 @@
         "sell": "Sell",
         "login": "Login",
         "logout": "Logout"
+    },
+    "DepositFunds": {
+        "title": "Deposit Funds",
+        "description": "Add funds to your account",
+        "amountPlaceholder": "Enter amount to deposit",
+        "depositButton": "Deposit"
+        
     }
    
 }
