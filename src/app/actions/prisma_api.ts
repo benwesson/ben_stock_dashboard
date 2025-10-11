@@ -49,10 +49,11 @@ export async function deleteStock( userEmail: string, id: number) {
 }
 
 export async function addFunds(email: string, amount: number) {
-  await prisma.user.update({
-    where: { email: email },
-    data: { funds: { increment: amount } },
-  });
+  const data =
+    amount >= 0
+      ? { funds: { increment: amount } }
+      : { funds: { decrement: Math.abs(amount) } };
+  return prisma.user.update({ where: { email }, data, select: { funds: true } });
 }
 
 export async function getFunds(email?: string) {
