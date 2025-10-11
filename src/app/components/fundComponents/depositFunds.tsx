@@ -2,6 +2,7 @@
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { fundAction } from "@/actions/fundAction";
 import {
   Card,
   CardAction,
@@ -11,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 export default async function DepositFunds() {
   const t = await getTranslations("DepositFunds");
   return (
@@ -21,14 +23,13 @@ export default async function DepositFunds() {
           <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form action={fundAction}>
             <div className="flex gap-2">
               <Input
               type="number"
               placeholder={t("amountPlaceholder")}
               name="amount"
-              min={0.01}
-              max={1000000}
+             
               required
             />
             <Button type="submit">{t("depositButton")}</Button>
