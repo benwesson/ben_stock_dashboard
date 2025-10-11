@@ -1,23 +1,14 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/utils/authOptions";
-import { getFunds } from "@/actions/prisma_api";
 import ShowFunds from "@/components/fundComponents/showFunds";
-import FundForm from "@/components/fundComponents/fundForm";
+import DepositFunds from "@/components/fundComponents/depositFunds";
 
 export default async function TradePage() {
-  const session = await getServerSession(authOptions);
-  const email = session?.user?.email;
-
-  if (email) {
-    const funds = await getFunds(email);
+ 
 
     return (
       <>
-        <ShowFunds funds={funds} email={email} />
-        <FundForm email={email} funds={funds} />
+        <ShowFunds />
+        <DepositFunds />
       </>
     );
-  } else {
-    return <div>Please sign in to buy stocks.</div>;
+ 
   }
-}

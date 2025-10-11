@@ -52,7 +52,7 @@ export default async function Positions({ data }: { data: SetupType }) {
               <TableCell>{position.quantity}</TableCell>
               <TableCell>{position.boughtAt}</TableCell>
               <TableCell>{position.currentPrice}</TableCell>
-              <TableCell>{position.currentPrice - position.boughtAt}</TableCell>
+              <TableCell>{(position.currentPrice - position.boughtAt).toFixed(2)}</TableCell>
             </TableRow>
           ))}
       </TableBody>
