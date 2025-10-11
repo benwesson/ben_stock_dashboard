@@ -5,6 +5,9 @@ import {
   findTicker,
   findDistinctTickers,
   createStock,
+  addFunds,
+  getFunds,
+
 } from "@/actions/prisma_api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
@@ -15,13 +18,13 @@ const validationSchema = z.object({
   ticker: z
     .string()
     .regex(/^[A-Za-z]+$/, "Input must be alphabetic")
-    .min(1, "Ticker is required")
-    .optional(),
+    .min(1, "Ticker is required"),
+    
   quantity: z
     .string()
     .regex(/^\d+$/, "Quantity must be a number")
-    .min(1, "Quantity is required")
-    .optional(),
+    .min(1, "Quantity is required"),
+    
   
 });
 
@@ -33,6 +36,7 @@ export interface BuyActionState extends BuyProps {
     quantity?: string[];
     accountStocks?: string[];
     buyOrders?: string[];
+    funds?: string[];
   };
 }
 
@@ -94,6 +98,7 @@ export  async function ServerActionTest(prevState: BuyActionState,formData: Form
   if (!email) {
     return {
       ticker: "",
+      quantity: "",
       errors: { ticker: ["User email not found in session"] },
     };
   }
@@ -108,6 +113,7 @@ export  async function ServerActionTest(prevState: BuyActionState,formData: Form
   if (!isValidData) {
     return {
       ticker: "",
+      quantity: "",
       errors: { ticker: ["invalid form data"] },
     };
   }
@@ -117,6 +123,7 @@ export  async function ServerActionTest(prevState: BuyActionState,formData: Form
   if (validQuantity <= 0 || validQuantity > 100) {
     return {
       ticker: "",
+      quantity: formQuantity,
       errors: { quantity: ["Quantity must be between 1 and 100"] },
     };
   }
@@ -125,13 +132,23 @@ export  async function ServerActionTest(prevState: BuyActionState,formData: Form
     validateFetch(validTicker),
     findTicker(validTicker, email),
     findDistinctTickers(email),
+    getFunds(email),
   ];
-  const [stock, existingTicker, distinctTickers] = await Promise.all(promises);
+  const [stock, existingTicker, distinctTickers, funds] = await Promise.all(promises);
 
   if (!stock) {
     return {
       ticker: "",
+      quantity: formQuantity,
       errors: { ticker: ["No stock data found for ticker"] },
+    };
+  }
+
+  if (!funds || funds <= 0) {
+    return {
+      ticker: validTicker,
+      quantity: formQuantity,
+      errors: { funds: ["Insufficient funds"] },
     };
   }
 
@@ -147,10 +164,23 @@ export  async function ServerActionTest(prevState: BuyActionState,formData: Form
     console.error("Backend validation failed:", canPurchase.errors);
     return {
       ticker: "",
+      quantity: formQuantity,
       errors: {...canPurchase.errors },
     };
   }
+  const orderCost = stockPrice * validQuantity;
+  console.log("Total order cost:", orderCost);
+  if (orderCost > funds) {
+    console.error("Insufficient funds:", funds, "available for order cost:", orderCost);
+    return {
+      ticker: validTicker,
+      quantity: formQuantity,
+      errors: { funds: ["Insufficient funds"] },
+    };
+  }
   await createStock(validTicker, validQuantity, stockPrice, email);
+  await addFunds(email, -orderCost);
+  console.log(`Deducted $${orderCost.toFixed(2)} from user ${email}'s funds.`);
   console.log("Purchase recorded in database");
-  return { ticker: validTicker, errors: {} };
+  return { ticker: validTicker, quantity: formQuantity, errors: {} };
 }
