@@ -39,7 +39,7 @@ export default function BuyComponent() {
       <CardContent>
         <form action={formAction}>
           <div className="flex space-x-2">
-            <Input className="w-1/4" type="text" name="ticker" placeholder={t("searchPlaceholder")} required  />
+            <Input className="w-1/4 mb-4" type="text" name="ticker" placeholder={t("searchPlaceholder")} required  />
             <Button type="submit">{t("searchButton")}</Button>
           </div>
         </form>
@@ -55,13 +55,17 @@ export default function BuyComponent() {
         ) : (
           state.ticker && (
             <>
+            <div className="ml-1">
               <div>{t("ticker")}: {state.ticker}</div>
               <div>{t("currentPrice")}: {state.stockPrice}</div>
               <div>{t("shares")}: {state.totalSharesOwned}</div>
               <div>{t("accountStocks")}: {state.accountStocks}</div>
               <div>{t("buyOrders")}: {state.buyOrders}</div>
+            </div>
               <form action={buyAction} onSubmit={() => setBuySubmitted(true)}>
-                <input
+                 <div className="flex space-x-2 mt-4">
+                <Input
+                  className="w-[300px]  "
                   type="number"
                   name="quantity"
                   placeholder={t("buyPlaceholder")}
@@ -69,8 +73,11 @@ export default function BuyComponent() {
                   max="100"
                   required
                 />
-                <input type="hidden" name="ticker" value={state.ticker} />
-                <button type="submit">{t("buyButton")}</button>
+               
+                  <input className ="hidden" type="hidden" name="ticker" value={state.ticker} />
+                  <Button type="submit">{t("buyButton")}</Button>
+                </div>
+              
               </form>
 
               {buyPending ? (
