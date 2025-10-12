@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import { addFunds } from "@/actions/prisma_api";
-import { parse } from "path";
+
 
 //Define Zod schema for validation
 const usdRegex = /^\$?\s*(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{1,2})?$/;
@@ -15,7 +15,6 @@ const validationSchema = z.object({
     .refine((s) => usdRegex.test(s), "Enter a USD amount like 1,234.56")
     .transform((s) => s.replace(/[$,\s,]/g, "")) // remove $, commas, spaces
     .transform((s) => Number(s))
-    
     .refine(
       (n) => Number.isFinite(n) && n > 0,
       "Amount must be greater than 0"
