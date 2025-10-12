@@ -67,7 +67,12 @@
         "amountPlaceholder": "Enter amount to deposit",
         "depositButton": "Deposit"
         
+    },
+    "Login": {
+        "title": "Login",
+        "description": "Log in to your account",
+        "signInWithGoogle": "Sign in with Google",
+        "signInWithGithub": "Sign in with Github"
     }
-   
 }
-       
+

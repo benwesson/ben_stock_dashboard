@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 
 export default function LoginPage() {
+  const t = useTranslations("Login");
   const router = useRouter();
   const { status } = useSession();
 
@@ -28,18 +30,17 @@ export default function LoginPage() {
     <div>
       <Card className="mt-8">
         <CardHeader>
-          <CardTitle>Login</CardTitle>
-          <CardDescription>Log in to your account</CardDescription>
-          
+          <CardTitle>{t("title")}</CardTitle>
+          <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
           
           <Button onClick={() => signIn("google", { callbackUrl: "/" })}>
-            Sign in with Google
+            {t("signInWithGoogle")}
           </Button>
           <br></br>
           <Button className="mt-8" >
-            Sign in with Github
+            {t("signInWithGithub")}
           </Button>
           
 

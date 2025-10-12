@@ -64,6 +64,11 @@
         "description": "Ajoutez des fonds à votre compte",
         "amountPlaceholder": "Entrez le montant à déposer",
         "depositButton": "Déposer" 
+    },
+    "Login": {
+        "title": "Connexion",
+        "description": "Connectez-vous à votre compte",
+        "signInWithGoogle": "Se connecter avec Google",
+        "signInWithGithub": "Se connecter avec Github"
     }
-   
 }

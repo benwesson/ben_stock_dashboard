@@ -66,6 +66,12 @@
         "amountPlaceholder": "Ingrese la cantidad a depositar",
         "depositButton": "Depositar"
         
+    },
+    "Login": {
+        "title": "Iniciar sesión",
+        "description": "Inicie sesión en su cuenta",
+        "signInWithGoogle": "Iniciar sesión con Google",
+        "signInWithGithub": "Iniciar sesión con Github"
     }
   
 }
