@@ -34,7 +34,7 @@ function buildConfig(seriesNames: string[]): ChartConfig {
   const palette = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
   const cfg: ChartConfig = { views: { label: "Series" } } as ChartConfig;
   seriesNames.forEach((name, i) => {
-    // @ts-expect-error dynamic keys allowed by ChartConfig shape
+    
     cfg[name] = { label: name, color: palette[i % palette.length] };
   });
   return cfg;
