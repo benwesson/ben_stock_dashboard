@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { ChartDataType } from "@/actions/chartAction";
+import type { ChartDataType } from "@/actions/oldchartAction";
 
 type Props = {
   data: ChartDataType;

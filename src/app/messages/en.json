@@ -19,7 +19,7 @@
     },
     "PortfolioChart": {
         "title":"Welcome to the homepage",
-        "Subtitle":"Select a stock to view its price"
+        "subtitle":"Select a stock to view its price"
     },
     "BuyComponent": {
         
