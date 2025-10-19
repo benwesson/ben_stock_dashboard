@@ -63,7 +63,9 @@
         "title": "Déposer des Fonds",
         "description": "Ajoutez des fonds à votre compte",
         "amountPlaceholder": "Entrez le montant à déposer",
-        "depositButton": "Déposer" 
+        "depositButton": "Déposer",
+        "loading": "Chargement...",
+        "success": "Fonds déposés avec succès!"
     },
     "Login": {
         "title": "Connexion",

@@ -65,8 +65,9 @@
         "title": "Deposit Funds",
         "description": "Add funds to your account",
         "amountPlaceholder": "Enter amount to deposit",
-        "depositButton": "Deposit"
-        
+        "depositButton": "Deposit",
+        "loading": "Loading...",
+        "success": "Funds deposited successfully!"
     },
     "Login": {
         "title": "Login",

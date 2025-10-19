@@ -64,8 +64,9 @@
         "title": "Depositar fondos",
         "description": "Agregue fondos a su cuenta",
         "amountPlaceholder": "Ingrese la cantidad a depositar",
-        "depositButton": "Depositar"
-        
+        "depositButton": "Depositar",
+        "loading": "Cargando...",
+        "success": "Fondos depositados con éxito!"
     },
     "Login": {
         "title": "Iniciar sesión",

@@ -1,8 +1,10 @@
+"use client"
 
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { fundAction } from "@/actions/fundAction";
+import { fundAction, FundActionState } from "@/actions/fundAction";
+import { useActionState } from "react";
 import {
   Card,
   CardAction,
@@ -12,9 +14,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { int } from "zod";
 
-export default async function DepositFunds() {
-  const t = await getTranslations("DepositFunds");
+const initialFormState: FundActionState = {
+  amount: "",
+};
+export default  function DepositFunds() {
+  const t = useTranslations("DepositFunds");
+  const [state, formAction, pending] = useActionState(
+      fundAction,
+      initialFormState
+    );
   return (
     <>
       <Card className="mt-8">
@@ -23,7 +33,7 @@ export default async function DepositFunds() {
           <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={fundAction}>
+          <form action={formAction}>
             <div className="flex gap-2">
               <Input
               type="number"
@@ -35,6 +45,26 @@ export default async function DepositFunds() {
             <Button type="submit">{t("depositButton")}</Button>
             </div>  
           </form>
+        {pending ? (
+							<div>{t("loading")}</div>
+						) : state.errors ? (
+							<div style={{ color: "red" }}>
+								{Object.values(state.errors).map(
+									(error, index) => (
+										<div key={index}>{error}</div>
+									)
+								)}
+							</div>
+						) : (
+							state.amount && (
+								<>
+									<div>
+										{t("success")}: {state.amount}
+									</div>
+								</>
+							)
+						)}
+
         </CardContent>
       </Card>
     </>

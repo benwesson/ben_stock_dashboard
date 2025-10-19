@@ -22,6 +22,20 @@ const validationSchema = z.object({
     
 });
 
+export type FundProps = {
+  amount: string;
+}
+
+export interface FundActionState extends FundProps {
+  success?: boolean;
+  message?: string;
+  errors?: {
+    email?: string[];
+    amount?: string[];
+    success?: boolean;
+  };
+}
+
 function validateAmount(amount: string | null) {
   try {
     validationSchema.parse({ amount });
@@ -32,7 +46,7 @@ function validateAmount(amount: string | null) {
   return true;
 }
 
-export async function fundAction(formData: FormData) {
+export async function fundAction(prevState: FundActionState, formData: FormData): Promise<FundActionState> {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
   console.log("User email from session:", email);
