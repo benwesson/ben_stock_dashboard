@@ -1,9 +1,8 @@
 import { getTranslations } from "next-intl/server";
-import { SetupType } from "@/actions/general/setup";
+import { Setup } from "@/actions/general/setup";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -11,14 +10,12 @@ import {
 } from "@/components/ui/table";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-export default async function Positions({ data }: { data: SetupType }) {
+export default async function Positions({ data }: { data: Setup }) {
   const t = await getTranslations("Positions");
   if (data.success === false) {
     return <div>{data.message}</div>;
@@ -44,8 +41,8 @@ export default async function Positions({ data }: { data: SetupType }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {Array.isArray(data) &&
-          data.map((position) => (
+        {Array.isArray(data.data) &&
+          data.data.map((position) => (
             <TableRow key={position.id}>
               <TableCell>{position.id}</TableCell>
               <TableCell>{position.ticker}</TableCell>

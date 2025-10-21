@@ -18,7 +18,7 @@
     },
     "PortfolioChart": {
         "title": "Graphique de Portefeuille",
-        "Subtitle": "Sélectionnez une action pour voir son prix"
+        "subtitle": "Sélectionnez une action pour voir son prix"
     },
     "BuyComponent": {
         "searchPlaceholder": "Entrez le symbole de l'action (ex: AAPL)",

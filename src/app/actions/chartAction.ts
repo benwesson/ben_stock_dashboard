@@ -8,21 +8,24 @@ import { findDistinctTickers } from "@/actions/prisma_api";
  * - "price" is a meta key used by your chart library
  * - dynamic keys (e.g., AAPL, MSFT) provide label and color per series
  */
-export type chartConfigType = {
+export interface ChartConfigType {
   price: { label: string };
   [key: string]: { label: string; color?: string };
 };
 
 // One chart row = one date with dynamic columns for each ticker:
 // { date: "YYYY-MM-DD", AAPL: 123.4, MSFT: 400.1, ... }
-export type chartRow = { date: string } & Record<string, number>;
+export interface ChartRow { 
+  date: string;
+  [key: string]: number | string;
+};
 
-/**
- * chartDataType is the merged array consumed by Recharts:
- * sorted ascending by date, with each row containing the closes for that date.
- */
-export type chartDataType = chartRow[];
-
+export interface ChartAction {
+	success: boolean;
+	config?: ChartConfigType;
+	data?: ChartRow[];
+	message?: string;
+};
 
 
 
@@ -40,7 +43,7 @@ function createChartConfig(stockData: { ticker: string }[]) {
     "var(--chart-5)",
   ];
 
-  const chartConfig: chartConfigType = {
+  const chartConfig: ChartConfigType = {
     price: { label: "Price USD" },
   };
 
@@ -64,7 +67,7 @@ function createChartConfig(stockData: { ticker: string }[]) {
 function createChartData(
   stockData: { ticker: string }[],
   responses: Awaited<ReturnType<typeof fetchStock>>[]
-): chartDataType {
+): ChartRow[] {
   // byDate accumulates rows keyed by ISO date string
   const byDate = new Map<string, ChartRow>();
 
@@ -73,7 +76,7 @@ function createChartData(
 
     // Defensive: ensure we have an array of { date, close } for this ticker
     const rows: Array<{ date: string; close: number }> = Array.isArray(responses[i]?.data)
-      ? (responses[i]!.data as any[])
+      ? responses[i].data
       : [];
 
     // Ensure chronological order (oldest -> newest) per ticker before merging
@@ -107,10 +110,11 @@ function createChartData(
  * - fetch 100-day history per ticker (in parallel)
  * - produce a chart config and merged chart data for rendering
  */
-export async function chartAction() {
+export async function chartAction(): Promise<ChartAction> {
   // Get email from session (server-side only)
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
+
   if (!email) {
     return { success: false, message: "No email found" };
   }

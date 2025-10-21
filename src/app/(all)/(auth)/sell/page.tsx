@@ -1,12 +1,13 @@
 import SellComponent from "@/components/sellPage/SellComponent";
 import ShowFunds from "@/components/fundComponents/showFunds";
-import { setup, SetupType } from "@/actions/general/setup";
+import { setupAction } from "@/actions/general/setup";
 
 export default async function SellTest() {
-  const test: SetupType = await setup();
+  const test = await setupAction();
+
   console.log("Test:", test);
 
-  if (test.success === false) {
+  if (test.success === false || !test.data || test.data.length === 0) {
     return (
       <>
         <ShowFunds />
@@ -18,7 +19,7 @@ export default async function SellTest() {
   return (
     <>
       <ShowFunds />
-      <SellComponent stockData={test} />
+      <SellComponent stockData={test.data} />
     </>
   );
 }

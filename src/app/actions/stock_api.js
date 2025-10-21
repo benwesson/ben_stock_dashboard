@@ -98,7 +98,6 @@ export async function fetchStock(stockTicker, limit = 100) {
   const options = {
     method: "GET",
     next: { revalidate: 3600 },
-    
   };
     
   try {

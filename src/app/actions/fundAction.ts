@@ -26,9 +26,10 @@ export type FundProps = {
   amount: string;
 }
 
-export interface FundActionState extends FundProps {
+export interface FundActionState  {
   success?: boolean;
   message?: string;
+  amount?: number;
   errors?: {
     email?: string[];
     amount?: string[];
@@ -53,31 +54,36 @@ export async function fundAction(prevState: FundActionState, formData: FormData)
 
   if (!email) {
     return {
-      amount: "",
+      
       errors: { email: ["User email not found in session"] },
     };
   }
 
   const formAmount = formData.get("amount") as string;
   console.log("Form Amount:", formAmount);
-  const isValid = await validateAmount(formAmount);
+  
+  const isValid = validateAmount(formAmount);
   console.log("Is amount valid?", isValid);
+  
   if (!isValid) {
    return {
-      amount: formAmount,
       errors: { amount: ["Invalid amount format"] },
     };
   }
+  
   const validAmount = parseFloat(formAmount.replace(/[$,\s,]/g, ""));
+  
   if (validAmount > 1000000) {
     console.log("Amount exceeds maximum limit");
-    return {
-      amount: formAmount,
+    return {  
       errors: { amount: ["Amount must be less than or equal to 1,000,000"] },
     };
   }
+  
   await addFunds(email, validAmount);
+  
   console.log(`Added $${validAmount} to account for ${email}`);
+  
   return {
     amount: validAmount,
     errors: {},

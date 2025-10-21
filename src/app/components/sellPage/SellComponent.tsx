@@ -30,21 +30,17 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 
+import type { StockInfo } from "@/actions/general/setup";
+
 const initialFormState: SellActionState = {
 	orderID: "",
 	quantity: "",
 };
+
 export default function SellComponent({
 	stockData,
 }: {
-	stockData: {
-		id: number;
-		ticker: string;
-		quantity: number;
-		boughtAt: number;
-		currentPrice: number;
-		summary: string;
-	}[];
+	stockData: StockInfo[];
 }) {
 	const t = useTranslations("SellComponent");
 	const [state, formAction, pending] = useActionState(
@@ -178,11 +174,9 @@ export default function SellComponent({
 							</div>
 						) : (
 							state.orderID && (
-								<>
-									<div>
-										{t("sellSuccess")}: {state.orderID}
-									</div>
-								</>
+								<div>
+									{t("sellSuccess")}: {state.orderID}
+								</div>
 							)
 						)}
 					</CardContent>

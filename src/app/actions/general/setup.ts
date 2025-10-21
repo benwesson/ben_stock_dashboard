@@ -3,30 +3,31 @@ import { authOptions } from "@/utils/authOptions";
 import { fetchStock } from "@/actions/stock_api";
 import { findStocks } from "@/actions/prisma_api";
 
-export type SetupType = Awaited<
-	| {
-			success: boolean;
-			message?: string;
-			id: number;
-			ticker: string;
-			quantity: number;
-			boughtAt: number;
-			currentPrice: number;
-			summary: string;
-	  }[]
-	| {
-			success: boolean;
-			message: string;
-	  }
->;
-export async function setup(limit = 1) {
+export interface StockInfo {
+	id: number;
+	ticker: string;
+	quantity: number;
+	boughtAt: number;
+	currentPrice: number;
+	summary: string;
+}
+
+export interface Setup {
+	success: boolean;
+	message?: string;
+	data?: StockInfo[];
+}
+
+export async function setupAction(limit = 1): Promise<Setup> {
 	const session = await getServerSession(authOptions);
 	const email = session?.user?.email;
+	
 	if (!email) {
 		return { success: false, message: "No email found" };
 	}
 
 	const stockData = await findStocks(email);
+
 	if (stockData.length === 0) {
 		return { success: false, message: "No stocks found" };
 	}
@@ -38,12 +39,14 @@ export async function setup(limit = 1) {
 	// Map of TICKER -> latest close
 	const priceMap: Record<string, number> = {};
 
-	const promises: Promise<any>[] = [];
+	const promises = [];
+
 	for (const ticker of stockList) {
 		promises.push(fetchStock(ticker, limit));
 	}
 
 	const stockInfoResponses = await Promise.all(promises);
+	
 	stockInfoResponses.forEach((stockInfo, index) => {
 		const ticker = stockList[index];
 		const close = stockInfo?.data?.[0]?.close ?? 0;
@@ -56,8 +59,6 @@ export async function setup(limit = 1) {
 		const t = s.ticker.toUpperCase();
 		const currentPrice = priceMap[t] ?? 0;
 		return {
-			success: true,
-			message: "Stock data fetched successfully",
 			id: s.id, // keep id for stable keys
 			ticker: s.ticker,
 			quantity: s.quantity,
@@ -69,5 +70,9 @@ export async function setup(limit = 1) {
 
 	console.log("Enriched:", enrichedStockData);
 
-	return enrichedStockData;
+	return {
+		success: true,
+		message: "Stock data fetched successfully",
+		data: enrichedStockData,
+	};
 }

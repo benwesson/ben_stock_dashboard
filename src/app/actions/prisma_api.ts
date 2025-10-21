@@ -61,10 +61,6 @@ export async function getFunds(email?: string) {
 
   const _email = session?.user?.email || email;
 
-  if (!_email) {
-    throw new Error("User not authenticated");
-  }
-
   const user = await prisma.user.findUnique({
     where: { email: _email },
     select: { funds: true },
