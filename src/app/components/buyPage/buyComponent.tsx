@@ -8,12 +8,9 @@ import {
 import { useTranslations } from "next-intl";
 import {
 	Card,
-	CardAction,
+
 	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
+	
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";

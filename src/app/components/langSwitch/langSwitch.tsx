@@ -1,5 +1,5 @@
 'use client';
-
+import { useActionState } from 'react';
 import {usePathname, useSearchParams} from 'next/navigation';
 import {setLocaleAction} from '@/actions/actions';
 import {
@@ -22,6 +22,7 @@ export default function LanguageSelect({value}: Props) {
   const redirectTo = `${pathname}${qs}`;
   const formRef = useRef<HTMLFormElement>(null);
 
+ 
   const handleValueChange = (newLocale: string) => {
     // Update hidden input and submit form
     if (formRef.current) {

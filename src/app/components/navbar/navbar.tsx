@@ -2,20 +2,13 @@ import Link from "next/link";
 import "@/globals.css"
 import styles from "@/components/navbar/navbar.module.css";
 import AuthLink from "@/components/authlink/authlink";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/utils/authOptions";
+
+
 import { getTranslations } from "next-intl/server";
 
 
-export default async function Navbar({ locale }: { locale: string }) {  
-  const session = await getServerSession(authOptions);
+export default async function Navbar() {  
+  
   const t = await getTranslations("Navbar");
 
   return (
