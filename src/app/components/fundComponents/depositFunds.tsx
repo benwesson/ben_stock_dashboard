@@ -22,6 +22,10 @@ export default function DepositFunds() {
 		initialFormState
 	);
 
+	function refreshPage() {
+		window.location.reload();
+	}
+
 	return (
 		<>
 			<Card className="mt-8">
@@ -41,9 +45,20 @@ export default function DepositFunds() {
 							<Button type="submit">{t("depositButton")}</Button>
 						</div>
 					</form>
-
-					{pending ? <div>{t("loading")}</div> : state.message}
-
+				</CardContent>
+			</Card>
+			<Card className="mt-4">
+				<CardContent>
+					<div className="flex items-center">
+						<Button className="mr-8" onClick={refreshPage}>
+							Refresh
+						</Button>
+						{pending ? (
+							<div className="">{t("loading")}</div>
+						) : (
+							state.message
+						)}
+					</div>
 				</CardContent>
 			</Card>
 		</>

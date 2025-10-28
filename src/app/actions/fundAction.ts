@@ -56,6 +56,7 @@ export async function fundAction(prevState: FundActionState, formData: FormData)
     return {
       
       errors: { email: ["User email not found in session"] },
+      message: "User email not found in session",
     };
   }
 
@@ -68,6 +69,7 @@ export async function fundAction(prevState: FundActionState, formData: FormData)
   if (!isValid) {
    return {
       errors: { amount: ["Invalid amount format"] },
+      message: "Invalid amount format",
     };
   }
   
@@ -86,6 +88,7 @@ export async function fundAction(prevState: FundActionState, formData: FormData)
   console.log(`Added $${validAmount} to account for ${email}`);
   
   return {
+    message: `Successfully deposited $${validAmount.toFixed(2)}`,
     amount: validAmount,
     errors: {},
   };
