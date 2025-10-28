@@ -77,6 +77,7 @@ export async function fundAction(prevState: FundActionState, formData: FormData)
     console.log("Amount exceeds maximum limit");
     return {  
       errors: { amount: ["Amount must be less than or equal to 1,000,000"] },
+      message: "Amount exceeds maximum limit",
     };
   }
   

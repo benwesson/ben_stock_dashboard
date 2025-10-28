@@ -7,10 +7,8 @@ import { fundAction, FundActionState } from "@/actions/fundAction";
 import { useActionState } from "react";
 import {
 	Card,
-	CardAction,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
@@ -43,22 +41,9 @@ export default function DepositFunds() {
 							<Button type="submit">{t("depositButton")}</Button>
 						</div>
 					</form>
-					
-					{pending && <div>{t("loading")}</div>}
-					
-					{!pending && state.errors && (
-						<div style={{ color: "red" }}>
-							{Object.values(state.errors).map((error, index) => (
-								<div key={index}>{error}</div>
-							))}
-						</div>
-					)}
-					
-					{!pending && !state.errors && state.amount && (
-						<div>
-							{t("success")}: {state.amount}
-						</div>
-					)}
+
+					{pending ? <div>{t("loading")}</div> : state.message}
+
 				</CardContent>
 			</Card>
 		</>

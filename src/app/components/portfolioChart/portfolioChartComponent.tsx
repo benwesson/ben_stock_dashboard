@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl"
 import { useMemo, useState, useEffect } from "react"
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
-import { chartConfigType, chartDataType, chartRow } from "@/actions/chartAction"
+import { ChartConfigType, ChartAction, ChartRow } from "@/actions/chartAction"
 
 import {
   Card,
@@ -20,7 +20,7 @@ import {
 
 export const description = "An interactive line chart"
 
-export default function PortFolioChartComponent( { chartConfig, chartData }: { chartConfig: chartConfigType; chartData: chartDataType } ) {
+export default function PortFolioChartComponent( { chartConfig, chartData }: { chartConfig: ChartConfigType; chartData: ChartAction } ) {
   const t = useTranslations("PortfolioChart")
   // Series keys are all keys except the meta key "price"
   const seriesKeys = useMemo(
@@ -43,7 +43,7 @@ export default function PortFolioChartComponent( { chartConfig, chartData }: { c
     const agg: Record<string, number> = {}
     for (const key of seriesKeys) {
       agg[key] = (chartData ?? []).reduce(
-        (acc, row) => acc + Number((row as chartRow)[key] ?? 0),
+        (acc, row) => acc + Number((row as ChartRow)[key] ?? 0),
         0
       )
     }
