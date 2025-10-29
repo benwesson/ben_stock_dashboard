@@ -4,10 +4,8 @@ import { SellActionState, sellAction } from "@/actions/sell/sellActions";
 import { useTranslations } from "next-intl";
 import {
 	Card,
-	CardAction,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
@@ -23,7 +21,6 @@ import { Input } from "@/components/ui/input";
 import {
 	Table,
 	TableBody,
-	TableCaption,
 	TableCell,
 	TableHead,
 	TableHeader,
@@ -42,6 +39,9 @@ export default function SellComponent({
 }: {
 	stockData: StockInfo[];
 }) {
+	function refreshPage() {
+		window.location.reload();
+	}
 	const t = useTranslations("SellComponent");
 	const [state, formAction, pending] = useActionState(
 		sellAction,
@@ -152,7 +152,7 @@ export default function SellComponent({
 								type="number"
 								placeholder={t("quantityPlaceholder")}
 								min="1"
-								max="100"
+								
 								className="mt-4 w-[180px]"
 								name="sharesToSell"
 								required
@@ -162,26 +162,20 @@ export default function SellComponent({
 							</Button>
 							{/* <Button>Sell All</Button> */}
 						</form>
-						{pending ? (
-							<div>{t("loading")}</div>
-						) : state.errors ? (
-							<div style={{ color: "red" }}>
-								{Object.values(state.errors).map(
-									(error, index) => (
-										<div key={index}>{error}</div>
-									)
-								)}
-							</div>
-						) : (
-							state.orderID && (
-								<div>
-									{t("sellSuccess")}: {state.orderID}
-								</div>
-							)
-						)}
+						
 					</CardContent>
 				</Card>
 			)}
+			<Card className="mt-4">
+				<CardContent>
+					<div className="flex items-center">
+						<Button className="mr-8" onClick={refreshPage}>
+							Refresh
+						</Button>
+						{pending ? (<div className="">{t("loading")}</div>) : (state.message)}
+					</div>
+				</CardContent>
+			</Card>
 		</>
 	);
 }

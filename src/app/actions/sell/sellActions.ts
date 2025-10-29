@@ -73,6 +73,7 @@ async function validateBackendData(
 			errors: {
 				orderID: ["No order data found for this order ID"],
 			},
+			message: "No order data found for this order ID",
 		};
 	}
 	const stockData = await validateFetch(orderData.ticker);
@@ -81,7 +82,8 @@ async function validateBackendData(
 			success: false,
 			errors: {
 				ticker: ["Invalid ticker symbol"],
-			},
+			}, 
+			message: "Invalid ticker symbol",
 		};
 	}
 	const currentPrice = stockData.close;
@@ -93,6 +95,7 @@ async function validateBackendData(
 			errors: {
 				quantity: ["Insufficient quantity to sell"],
 			},
+			message: "Insufficient quantity to sell",
 		};
 	} else if (quantity == orderData.quantity) {
 		await deleteStock(email, orderID);
@@ -120,6 +123,7 @@ export async function sellAction(
 
 	if (!email) {
 		return {
+			message : "User email not found in session",
 			errors: { email: ["User email not found in session"] },
 		};
 	}
@@ -134,6 +138,7 @@ export async function sellAction(
 
 	if (!isValidData) {
 		return {
+			message : "Invalid form data",
 			errors: { orderID: ["invalid form data"] },
 		};
 	}
@@ -150,6 +155,7 @@ export async function sellAction(
 	console.log("Backend validation result:", isValidBackend);
 	if (!isValidBackend.success) {
 		return {
+			message : `Backend validation failed ${isValidBackend.errors}`,
 			errors: { ...isValidBackend.errors },
 		};
 	}
@@ -159,6 +165,7 @@ export async function sellAction(
 
 	// console.log(`Added $${sale.toFixed(2)} to user ${email}'s funds.`);
 	return {
+		message: `Successfully sold ${quantity} shares from order ID ${orderID}`,
 		orderID: String(orderID),
 		quantity: String(quantity),
 		success: true,
