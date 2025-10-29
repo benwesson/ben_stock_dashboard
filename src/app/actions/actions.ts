@@ -2,29 +2,24 @@
 
 import { z } from "zod";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+
 
 const schema = z.object({
 	locale: z.union([z.literal("en"), z.literal("fr"), z.literal("es")]),
-	redirectTo: z.string().optional(),
+	
 });
 
 type Props = z.infer<typeof schema>;
 
 export async function setLocaleAction(formData: FormData) {
-	const { locale, redirectTo }: Props = {
-		locale: formData.get("locale") || "en",
-		redirectTo: formData.get("redirectTo") || "/",
-	};
+	const formSelection = formData.get("locale") as string;
+	const safeSelection = schema.safeParse({locale: formSelection});
 
-	const safeData = schema.safeParse({
-		locale: locale,
-		redirectTo: redirectTo,
-	});
+	const { locale }: Props = safeSelection.success ? safeSelection.data : { locale: "en" };
 
-	if (!safeData.success) {
+	if (!safeSelection.success) {
 		return {
-			errors: safeData.error.flatten().fieldErrors,
+			errors: safeSelection.error.flatten().fieldErrors,
 		};
 	} else {
 		(await cookies()).set("locale", locale, {
@@ -33,6 +28,8 @@ export async function setLocaleAction(formData: FormData) {
 			sameSite: "lax",
 		});
 
-		redirect(redirectTo);
+		
 	}
 }
+
+		
