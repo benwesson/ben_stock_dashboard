@@ -1,6 +1,6 @@
 "use client";
 import { usePathname, useSearchParams } from "next/navigation";
-import { setLocaleAction } from "@/actions/actions";
+import { setLocaleAction } from "@/actions/language/language";
 import {
 	Select,
 	SelectContent,

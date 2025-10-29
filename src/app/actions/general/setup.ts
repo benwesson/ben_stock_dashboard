@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
-import { fetchStock } from "@/actions/stock_api";
-import { findStocks } from "@/actions/prisma_api";
+import { fetchStock } from "@/actions/marketStack/stock_api";
+import { findStocks } from "@/actions/database/prisma_api";
 
 export interface StockInfo {
 	id: number;
@@ -21,7 +21,7 @@ export interface Setup {
 export async function setupAction(limit = 1): Promise<Setup> {
 	const session = await getServerSession(authOptions);
 	const email = session?.user?.email;
-	
+
 	if (!email) {
 		return { success: false, message: "No email found" };
 	}
@@ -46,7 +46,7 @@ export async function setupAction(limit = 1): Promise<Setup> {
 	}
 
 	const stockInfoResponses = await Promise.all(promises);
-	
+
 	stockInfoResponses.forEach((stockInfo, index) => {
 		const ticker = stockList[index];
 		const close = stockInfo?.data?.[0]?.close ?? 0;

@@ -5,10 +5,10 @@ import {
 	updateStock,
 	deleteStock,
 	addFunds,
-} from "@/actions/prisma_api";
+} from "@/actions/database/prisma_api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
-import validateFetch from "@/validation/validateFetch";
+import validateFetch from "@/actions/validation/validateFetch";
 
 //Define Zod schema for validation
 const validationSchema = z.object({
@@ -82,7 +82,7 @@ async function validateBackendData(
 			success: false,
 			errors: {
 				ticker: ["Invalid ticker symbol"],
-			}, 
+			},
 			message: "Invalid ticker symbol",
 		};
 	}
@@ -123,7 +123,7 @@ export async function sellAction(
 
 	if (!email) {
 		return {
-			message : "User email not found in session",
+			message: "User email not found in session",
 			errors: { email: ["User email not found in session"] },
 		};
 	}
@@ -138,7 +138,7 @@ export async function sellAction(
 
 	if (!isValidData) {
 		return {
-			message : "Invalid form data",
+			message: "Invalid form data",
 			errors: { orderID: ["invalid form data"] },
 		};
 	}
@@ -155,7 +155,7 @@ export async function sellAction(
 	console.log("Backend validation result:", isValidBackend);
 	if (!isValidBackend.success) {
 		return {
-			message : `Backend validation failed ${isValidBackend.errors}`,
+			message: `Backend validation failed ${isValidBackend.errors}`,
 			errors: { ...isValidBackend.errors },
 		};
 	}

@@ -2,7 +2,7 @@ import { setupAction } from "@/actions/general/setup";
 import Positions from "@/components/positions/positions";
 import ShowFunds from "@/components/fundComponents/showFunds";
 import PortfolioChartComponent from "@/components/portfolioChart/portfolioChartComponent";
-import { chartAction } from "@/actions/chartAction";
+import { chartAction } from "@/actions/chart/chartAction";
 
 export default async function HomePage() {
 	const chartSetup = await chartAction();

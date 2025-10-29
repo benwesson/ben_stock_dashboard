@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
-import { fetchStock } from "@/actions/stock_api";
-import { findDistinctTickers } from "@/actions/prisma_api";
+import { fetchStock } from "@/actions/marketStack/stock_api";
+import { findDistinctTickers } from "@/actions/database/prisma_api";
 
 /**
  * Chart config for ChartContainer.

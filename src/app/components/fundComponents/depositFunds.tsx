@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { fundAction, FundActionState } from "@/actions/fundAction";
+import { fundAction, FundActionState } from "@/actions/accoutFunds/fundAction";
 import { useActionState } from "react";
 import {
 	Card,

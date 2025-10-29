@@ -1,4 +1,4 @@
-import { fetchStock } from "@/actions/stock_api";
+import { fetchStock } from "@/actions/marketStack/stock_api";
 export default async function validateFetch(ticker: string) {
   try {
     const stock = await fetchStock(ticker, 1);

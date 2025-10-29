@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { getFunds } from "@/actions/prisma_api";
+import { getFunds } from "@/actions/database/prisma_api";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default async function ShowFunds() {
