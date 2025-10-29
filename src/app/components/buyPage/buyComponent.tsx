@@ -26,6 +26,9 @@ const initialBuyState: BuyActionState = {
 };
 
 export default function BuyComponent() {
+	function refreshPage() {
+		window.location.reload();
+	}
 	const t = useTranslations("BuyComponent");
 	const [state, formAction, pending] = useActionState(
 		handleSearch,
@@ -37,6 +40,8 @@ export default function BuyComponent() {
 	);
 	
 	return (
+		<>
+	
 		<Card className="mt-8">
 			<CardContent>
 				<form action={formAction}>
@@ -96,9 +101,21 @@ export default function BuyComponent() {
 									</Button>
 								</div>
 							</form>
-							{buyPending ? (<div className="">{t("loading")}</div>) : (buyState.message)}
+						
 							</> }
 			</CardContent>
 		</Card>
+		<Card className="mt-4">
+				<CardContent>
+					<div className="flex items-center">
+						<Button className="mr-8" onClick={refreshPage}>
+							Refresh
+						</Button>
+						{buyPending ? (<div className="">{t("loading")}</div>) : (buyState.message)}
+					</div>
+				</CardContent>
+			</Card>
+		</>
+
 	);
 }
