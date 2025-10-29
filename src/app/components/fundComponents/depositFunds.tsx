@@ -53,11 +53,7 @@ export default function DepositFunds() {
 						<Button className="mr-8" onClick={refreshPage}>
 							Refresh
 						</Button>
-						{pending ? (
-							<div className="">{t("loading")}</div>
-						) : (
-							state.message
-						)}
+						{pending ? (<div className="">{t("loading")}</div>) : (state.message)}
 					</div>
 				</CardContent>
 			</Card>

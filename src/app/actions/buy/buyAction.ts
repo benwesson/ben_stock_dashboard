@@ -28,9 +28,13 @@ const validationSchema = z.object({
   
 });
 
-export type BuyProps = z.infer<typeof validationSchema>;
+export type BuyProps = {
+  ticker: string;
+  quantity: string;
+}
 
 export interface BuyActionState extends BuyProps {
+  message?: string;
   errors?: {
     ticker?: string[];
     quantity?: string[];
@@ -68,6 +72,7 @@ function validateBackendData(
   if (buyOrders >= 3) {
     return {
       success: false,
+      message: "User cannot have more than 3 buy orders for this ticker",
       errors: {
         buyOrders: ["User cannot have more than 3 buy orders for this ticker"],
       },
@@ -77,6 +82,7 @@ function validateBackendData(
   if (!isExisting && ownedSet.size >= 4) {
     return {
       success: false,
+      message: "User cannot own more than 4 distinct stocks",
       errors: {
         distinctTickers: ["User cannot own more than 4 distinct stocks"],
       },
@@ -99,6 +105,7 @@ export  async function ServerActionTest(prevState: BuyActionState,formData: Form
     return {
       ticker: "",
       quantity: "",
+      message: "User email not found in session",
       errors: { ticker: ["User email not found in session"] },
     };
   }
@@ -114,6 +121,7 @@ export  async function ServerActionTest(prevState: BuyActionState,formData: Form
     return {
       ticker: "",
       quantity: "",
+      message: "Invalid form data",
       errors: { ticker: ["invalid form data"] },
     };
   }
@@ -124,6 +132,7 @@ export  async function ServerActionTest(prevState: BuyActionState,formData: Form
     return {
       ticker: "",
       quantity: formQuantity,
+      message: "Quantity must be between 1 and 100",
       errors: { quantity: ["Quantity must be between 1 and 100"] },
     };
   }
@@ -140,6 +149,7 @@ export  async function ServerActionTest(prevState: BuyActionState,formData: Form
     return {
       ticker: "",
       quantity: formQuantity,
+      message: "No stock data found for ticker",
       errors: { ticker: ["No stock data found for ticker"] },
     };
   }
@@ -148,6 +158,7 @@ export  async function ServerActionTest(prevState: BuyActionState,formData: Form
     return {
       ticker: validTicker,
       quantity: formQuantity,
+      message: "Insufficient funds",
       errors: { funds: ["Insufficient funds"] },
     };
   }
@@ -164,6 +175,7 @@ export  async function ServerActionTest(prevState: BuyActionState,formData: Form
     console.error("Backend validation failed:", canPurchase.errors);
     return {
       ticker: "",
+      message: `Cannot proceed with purchase, ${canPurchase.message}`,
       quantity: formQuantity,
       errors: {...canPurchase.errors },
     };

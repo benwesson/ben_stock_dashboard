@@ -16,8 +16,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 
 const initialFormState: SearchActionState = {
-	ticker: "",
+	message: " ",
 };
+
 
 const initialBuyState: BuyActionState = {
 	quantity: "0",
@@ -34,11 +35,7 @@ export default function BuyComponent() {
 		ServerActionTest,
 		initialBuyState
 	);
-	const [buySubmitted, setBuySubmitted] = useState(false);
-
-	// reset submission flag when the searched ticker changes
-	useEffect(() => setBuySubmitted(false), [state.ticker]);
-
+	
 	return (
 		<Card className="mt-8">
 			<CardContent>
@@ -55,18 +52,9 @@ export default function BuyComponent() {
 					</div>
 				</form>
 
-				{pending ? (
-					<div>{t("loading")}</div>
-				) : state.errors ? (
-					<div style={{ color: "red" }}>
-						{Object.values(state.errors).map((error, index) => (
-							<div key={index}>{error}</div>
-						))}
-					</div>
-				) : (
-					state.ticker && (
-						<>
-							<div className="ml-1">
+				{pending ? (<div>{t("loading")}</div>) : state.message ? (
+					<div className="ml-2">{state.message}</div>
+				) : <><div className="ml-2">
 								<div>
 									{t("ticker")}: {state.ticker}
 								</div>
@@ -85,11 +73,10 @@ export default function BuyComponent() {
 							</div>
 							<form
 								action={buyAction}
-								onSubmit={() => setBuySubmitted(true)}
 							>
 								<div className="flex space-x-2 mt-4">
 									<Input
-										className="w-32  "
+										className="w-60  "
 										type="number"
 										name="quantity"
 										placeholder={t("buyPlaceholder")}
@@ -109,25 +96,8 @@ export default function BuyComponent() {
 									</Button>
 								</div>
 							</form>
-
-							{buyPending ? (
-								<div>{t("processingPurchase")}</div>
-							) : buySubmitted ? (
-								buyState.errors ? (
-									<div style={{ color: "red" }}>
-										{Object.values(buyState.errors).map(
-											(error, index) => (
-												<div key={index}>{error}</div>
-											)
-										)}
-									</div>
-								) : (
-									<div>{t("purchaseSuccess")}</div>
-								)
-							) : null}
-						</>
-					)
-				)}
+							{buyPending ? (<div className="">{t("loading")}</div>) : (buyState.message)}
+							</> }
 			</CardContent>
 		</Card>
 	);

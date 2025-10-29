@@ -25,17 +25,15 @@ const validationSchema = z.object({
   buyOrders: z.number().max(3, "Quantity must be at most 3").optional(),
 });
 
-export type SearchProps = z.infer<typeof validationSchema>;
-
-export interface SearchActionState extends SearchProps {
-  errors?: {
-    ticker?: string[];
-    stockPrice?: string[];
-    totalSharesOwned?: string[];
-    accountStocks?: string[];
-    buyOrders?: string[];
-  };
+export type SearchActionState =  {
+  message?: string;
+  ticker?: string;
+  stockPrice?: number;
+  totalSharesOwned?: number;
+  accountStocks?: number;
+  buyOrders?: number;
 }
+
 
 function validateTicker(ticker: FormDataEntryValue | null) {
   try {
@@ -71,7 +69,7 @@ async function validateFetch(ticker: string) {
 }
 
 export async function handleSearch(
-  _prevState: SearchProps,
+  _prevState: SearchActionState,
   formData: FormData
 ): Promise<SearchActionState> {
   //Get user email to see who is logged in
@@ -81,8 +79,7 @@ export async function handleSearch(
 
   if (!email) {
     return {
-      ticker: "",
-      errors: { ticker: ["User email not found in session"] },
+      message: "User email not found in session",
     };
   }
 
@@ -106,8 +103,7 @@ export async function handleSearch(
       console.log("Stock not found for ticker:", _ticker);
 
       return {
-        ticker: _ticker,
-        errors: { ticker: ["Stock not found for ticker"] },
+        message: "Stock not found for ticker",
       };
     }
 
@@ -129,7 +125,6 @@ export async function handleSearch(
   }
 
   return {
-    ticker: formTicker ? formTicker.toString().toUpperCase() : "",
-    errors: { ticker: ["Invalid ticker input"] },
+    message: "Invalid ticker input",
   };
 }
