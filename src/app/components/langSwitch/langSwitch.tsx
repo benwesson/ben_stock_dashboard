@@ -35,7 +35,7 @@ export default function LanguageSelect({ value }: Props) {
 	};
 
 	return (
-		<form ref={formRef} action={setLocaleAction} className="mt-8">
+		<form ref={formRef} action={setLocaleAction } className="mt-8">
 			<input type="hidden" name="redirectTo" value={redirectTo} />
 			<input type="hidden" name="locale" value={value} />
 			<Select value={value} onValueChange={handleValueChange}>

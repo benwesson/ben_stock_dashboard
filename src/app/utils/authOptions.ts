@@ -12,10 +12,10 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   pages: { signIn: "/login" },
-  session: { strategy: "database" }, // or "jwt"
+  session: { strategy: "database" }, 
   callbacks: {
     async session({ session, user }) {
-      if (session.user && user?.id) (session.user as any).id = user.id;
+      if (session.user && user?.id) (session.user).email = user.email;
       return session;
     },
   },
