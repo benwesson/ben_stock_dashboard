@@ -1,12 +1,8 @@
 "use client";
-import { useTranslations } from "next-intl";
-import { useMemo, useState, useEffect } from "react";
+import { ChartRow, ChartConfigType } from "@/actions/chart/chartAction";
+import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import {
-	ChartConfigType,
-	ChartAction,
-	ChartRow,
-} from "@/actions/chart/chartAction";
+import { useTranslations } from "next-intl";
 
 import {
 	Card,
@@ -24,45 +20,34 @@ import {
 
 export const description = "An interactive line chart";
 
-export default function PortFolioChartComponent({
-	chartConfig,
+export default function PortfolioChartComponent({
 	chartData,
+	chartConfig,
 }: {
+	chartData: ChartRow[];
 	chartConfig: ChartConfigType;
-	chartData: ChartAction;
 }) {
+	chartConfig satisfies ChartConfig;
 	const t = useTranslations("PortfolioChart");
-	// Series keys are all keys except the meta key "price"
-	const seriesKeys = useMemo(
-		() => Object.keys(chartConfig).filter((k) => k !== "price"),
+	//Create key for each item in chartConfig, to have the first stock be selcted by default we use index 1 becuase index 0 is price
+	const chartKeys = useMemo(
+		() => Object.keys(chartConfig) as (keyof typeof chartConfig)[],
 		[chartConfig]
 	);
-
-	const [activeSeries, setActiveSeries] = useState<string>(
-		seriesKeys[0] || ""
+	const [activeChart, setActiveChart] = useState<keyof typeof chartConfig>(
+		chartKeys[1]
 	);
 
-	useEffect(() => {
-		// reset active series if config changes
-		if (seriesKeys.length && !seriesKeys.includes(activeSeries)) {
-			setActiveSeries(seriesKeys[0]);
-		}
-	}, [seriesKeys, activeSeries]);
-
-	const totals = useMemo(() => {
-		const agg: Record<string, number> = {};
-		for (const key of seriesKeys) {
-			agg[key] = (chartData ?? []).reduce(
-				(acc, row) => acc + Number((row as ChartRow)[key] ?? 0),
+	const total = useMemo(() => {
+		const result: Record<string, number> = {};
+		for (const key of chartKeys) {
+			result[key] = chartData.reduce<number>(
+				(acc, curr) => acc + Number(curr[key] ?? 0),
 				0
 			);
 		}
-		return agg;
-	}, [chartData, seriesKeys]);
-
-	if (!seriesKeys.length) {
-		return <div>No series to display.</div>;
-	}
+		return result;
+	}, [chartData, chartKeys]);
 
 	return (
 		<Card className="py-4 sm:py-0 mt-8">
@@ -71,33 +56,41 @@ export default function PortFolioChartComponent({
 					<CardTitle>{t("title")}</CardTitle>
 					<CardDescription>{t("subtitle")}</CardDescription>
 				</div>
-				<div className="flex overflow-x-auto">
-					{seriesKeys.map((key) => (
-						<button
-							key={key}
-							data-active={activeSeries === key}
-							className="data-[active=true]:bg-muted/50 flex min-w-36 flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l sm:border-t-0 sm:border-l sm:px-8 sm:py-6"
-							onClick={() => setActiveSeries(key)}
-						>
-							<span className="text-muted-foreground text-xs">
-								{chartConfig[key]?.label ?? key}
-							</span>
-							<span className="text-lg leading-none font-bold sm:text-3xl">
-								{Math.round(totals[key] || 0).toLocaleString()}
-							</span>
-						</button>
-					))}
+				<div className="flex flex-nowrap overflow-x-auto pb-3 sm:px-0 sm:pb-0">
+					{chartKeys.slice(1).map((key) => {
+						const chart = key as keyof typeof chartConfig;
+						return (
+							<button
+								key={chart}
+								data-active={activeChart === chart}
+								className="data-[active=true]:bg-muted/50 flex flex-none min-w-[160px] flex-col justify-center gap-1 border-l border-t px-6 py-4  first:border-l-0 sm:border-t-0 sm:px-8 sm:py-6 "
+								onClick={() => setActiveChart(chart)}
+							>
+								<span className="text-muted-foreground text-xs">
+									{chartConfig[chart].label}
+								</span>
+								<span className="text-lg leading-none font-bold sm:text-3xl">
+									{total[
+										key as keyof typeof total
+									].toLocaleString()}
+								</span>
+							</button>
+						);
+					})}
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 sm:p-6">
 				<ChartContainer
-					config={chartConfig as unknown as ChartConfig}
+					config={chartConfig}
 					className="aspect-auto h-[250px] w-full"
 				>
 					<LineChart
 						accessibilityLayer
 						data={chartData}
-						margin={{ left: 12, right: 12 }}
+						margin={{
+							left: 12,
+							right: 12,
+						}}
 					>
 						<CartesianGrid vertical={false} />
 						<XAxis
@@ -106,15 +99,13 @@ export default function PortFolioChartComponent({
 							axisLine={false}
 							tickMargin={8}
 							minTickGap={32}
-							tickFormatter={(value) =>
-								new Date(value as string).toLocaleDateString(
-									"en-US",
-									{
-										month: "short",
-										day: "numeric",
-									}
-								)
-							}
+							tickFormatter={(value) => {
+								const date = new Date(value);
+								return date.toLocaleDateString("en-US", {
+									month: "short",
+									day: "numeric",
+								});
+							}}
 						/>
 						<YAxis
 							tickLine={false}
@@ -125,26 +116,25 @@ export default function PortFolioChartComponent({
 							content={
 								<ChartTooltipContent
 									className="w-[150px]"
-									nameKey={activeSeries}
-									labelFormatter={(value) =>
-										new Date(
-											value as string
+									nameKey="price"
+									labelFormatter={(value) => {
+										return new Date(
+											value
 										).toLocaleDateString("en-US", {
 											month: "short",
 											day: "numeric",
 											year: "numeric",
-										})
-									}
+										});
+									}}
 								/>
 							}
 						/>
 						<Line
-							dataKey={activeSeries}
+							dataKey={activeChart}
 							type="monotone"
-							stroke={`var(--color-${activeSeries})`}
+							stroke={`var(--color-${activeChart})`}
 							strokeWidth={2}
 							dot={false}
-							isAnimationActive={false}
 						/>
 					</LineChart>
 				</ChartContainer>

@@ -7,11 +7,15 @@ import { chartAction } from "@/actions/chart/chartAction";
 export default async function HomePage() {
 	const chartSetup = await chartAction();
 
-	if (chartSetup.success === false) {
+
+	const chartData = chartSetup.data;
+	const chartConfig = chartSetup.config;
+	
+	if (!chartData || !chartConfig) {
 		return (
 			<>
 				<ShowFunds />
-				<div>{chartSetup.message}</div>
+				<div>{chartSetup.message ?? "No chart data available."}</div>
 			</>
 		);
 	}
@@ -30,10 +34,11 @@ export default async function HomePage() {
 	return (
 		<>
 			<ShowFunds />
-			<PortfolioChartComponent
+			{/* <PortfolioChartComponent
 				chartConfig={chartSetup.config}
 				chartData={chartSetup.data}
-			/>
+			/> */}
+			<PortfolioChartComponent chartData={chartData} chartConfig={chartConfig} />
 			<Positions data={data} />
 		</>
 	);
