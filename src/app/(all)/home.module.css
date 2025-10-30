@@ -1,25 +1,18 @@
 
 
 .container {
-
-  /* background-color:  #faf9f9; */
   min-height: 100vh;
   max-width: 1536px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 170px;
-  padding-right: 170px;
-  
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr auto;
   justify-content: center;
-  
-  grid-template-areas:
-    "header"
-    "main"
-    "footer";
-  }
+  padding-left: 20px;
+  padding-right: 20px;
 
+
+
+}
   
+
+
 

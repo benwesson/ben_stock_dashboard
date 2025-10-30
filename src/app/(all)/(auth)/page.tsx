@@ -34,12 +34,8 @@ export default async function HomePage() {
 	return (
 		<>
 			<ShowFunds />
-			{/* <PortfolioChartComponent
-				chartConfig={chartSetup.config}
-				chartData={chartSetup.data}
-			/> */}
-			<PortfolioChartComponent chartData={chartData} chartConfig={chartConfig} />
-			<Positions data={data} />
+			 <PortfolioChartComponent chartData={chartData} chartConfig={chartConfig} /> 
+			<Positions data={data} /> 
 		</>
 	);
 }

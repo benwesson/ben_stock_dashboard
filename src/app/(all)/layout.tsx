@@ -31,6 +31,7 @@ export default async function RootLayout({
         <AuthProvider>
           <Navbar />
           <div className={styles.container}>
+			
             <LanguageSelect value={locale} />
 
             <div className={styles.main}>
