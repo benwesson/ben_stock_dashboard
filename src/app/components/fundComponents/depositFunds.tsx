@@ -41,6 +41,7 @@ export default function DepositFunds() {
 								placeholder={t("amountPlaceholder")}
 								name="amount"
 								required
+								max={1000000}
 							/>
 							<Button type="submit">{t("depositButton")}</Button>
 						</div>
