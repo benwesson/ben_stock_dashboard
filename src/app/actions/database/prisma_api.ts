@@ -77,16 +77,6 @@ export async function findDistinctTickers(email: string) {
   });
 }
 
-
-
-export async function getTotalSharesForTicker(ticker: string, userEmail: string) {
-  const agg = await prisma.stock.aggregate({
-    where: { userEmail, ticker: ticker.toUpperCase() },
-    _sum: { quantity: true },
-  });
-  return agg._sum.quantity ?? 0;
-}
-
 export async function findStockOrder (id: number, userEmail: string) {
   return prisma.stock.findFirst({
     where: { id, userEmail },
