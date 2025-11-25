@@ -1,6 +1,7 @@
 "use client"
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import "@/globals.css";
 
 export default function AuthLink({ loginText, logoutText }: { loginText: string; logoutText: string }) {
     const { status } = useSession();
@@ -8,9 +9,9 @@ export default function AuthLink({ loginText, logoutText }: { loginText: string;
     return (
         <div>
             {status === "unauthenticated" ? (
-                <Link className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white" href="/login">{loginText}</Link>
+                <Link className="rounded-md px-3 py-2 text-xl text-gray-300 hover:bg-white/5 hover:text-white" href="/login">{loginText}</Link>
             ) : (   
-                <span className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white" onClick={() => signOut()}>{logoutText}</span>
+                <span className="rounded-md px-3 py-2 text-xl text-gray-300 hover:bg-white/5 hover:text-white" onClick={() => signOut()}>{logoutText}</span>
             )}
         </div>
     );

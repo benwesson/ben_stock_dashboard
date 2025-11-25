@@ -1,5 +1,6 @@
 "use server";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
 import {
 	findTicker,
@@ -202,11 +203,15 @@ export async function ServerActionTest(
 			errors: { funds: ["Insufficient funds"] },
 		};
 	}
+
+	revalidatePath("/buy");
+
 	await createStock(validTicker, validQuantity, stockPrice, email);
 	await addFunds(email, -orderCost);
 	console.log(
 		`Deducted $${orderCost.toFixed(2)} from user ${email}'s funds.`
 	);
 	console.log("Purchase recorded in database");
+
 	return { ticker: validTicker, quantity: formQuantity, errors: {} };
 }

@@ -67,9 +67,50 @@ async function validateFetch(ticker: string) {
 	}
 }
 
-export async function handleSearch(
+export async function fetchTickerData(
 	_prevState: SearchActionState,
 	formData: FormData
+): Promise<{
+	ticker?: string;
+	message?: string;
+}> {
+	const session = await getServerSession(authOptions);
+	const email = session?.user?.email;
+
+	if (!email) {
+		return {
+			message: "User email not found in session",
+		};
+	}
+
+	//Get ticker from input in form
+	const formTicker = formData.get("ticker");
+
+	//Make sure ticker is a valid string
+	const isValidTicker = validateTicker(formTicker);
+
+	//If ticker is valid continue
+	if (isValidTicker) {
+		const stock = await validateFetch(formTicker!.toString().toUpperCase());
+
+		if (!stock) {
+			return {
+				message: "Stock not found for ticker",
+			};
+		}
+
+		return {
+			ticker: formTicker!.toString().toUpperCase(),
+		};
+	} else {
+		return {
+			message: "Invalid ticker input",
+		};
+	}
+}
+
+export async function handleSearch(
+	formTicker: string
 ): Promise<SearchActionState> {
 	//Get user email to see who is logged in
 	const session = await getServerSession(authOptions);
@@ -81,9 +122,6 @@ export async function handleSearch(
 			message: "User email not found in session",
 		};
 	}
-
-	//Get ticker from input in form
-	const formTicker = formData.get("ticker");
 
 	//Make sure ticker is a valid string
 	const isValidTicker = validateTicker(formTicker);
