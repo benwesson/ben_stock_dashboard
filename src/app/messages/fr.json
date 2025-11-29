@@ -17,7 +17,7 @@
         "gainLoss": "Gain/Perte"
     },
     "PortfolioChart": {
-        "title": "Graphique de Portefeuille",
+        "title": "Visionneuse de Portefeuille",
         "subtitle": "Sélectionnez une action pour voir son prix"
     },
     "BuyComponent": {

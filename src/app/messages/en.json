@@ -18,7 +18,7 @@
         "gainLoss": "Gain/Loss"
     },
     "PortfolioChart": {
-        "title":"Welcome to the homepage",
+        "title":"Portfolio Viewer",
         "subtitle":"Select a stock to view its price"
     },
     "BuyComponent": {

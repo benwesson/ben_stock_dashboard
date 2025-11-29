@@ -52,24 +52,24 @@ export default function PortfolioChartComponent({
 	return (
 		<Card className="py-4 sm:py-0 mt-8">
 			<CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
-				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 sm:pb-0">
+				<div className="flex  flex-col justify-center gap-1 px-6 py-5 pb-3 sm:pb-0">
 					<CardTitle>{t("title")}</CardTitle>
 					<CardDescription>{t("subtitle")}</CardDescription>
 				</div>
-				<div className="flex flex-nowrap overflow-x-auto pb-3 sm:px-0 sm:pb-0">
+				<div className="  grid w-full grid-cols-[repeat(auto-fit,minmax(180px,1fr))] divide-x divide-border border-t border-l border-border rounded-tr-lg overflow-hidden sm:px-0 sm:pb-0">
 					{chartKeys.slice(1).map((key) => {
 						const chart = key as keyof typeof chartConfig;
 						return (
 							<button
 								key={chart}
 								data-active={activeChart === chart}
-								className="data-[active=true]:bg-muted/50 flex flex-none min-w-[160px] flex-col justify-center gap-1 border-l border-t px-6 py-4  first:border-l-0 sm:border-t-0 sm:px-8 sm:py-6 "
+								className="data-[active=true]:bg-muted/50 flex min-h-[104px] flex-col justify-center gap-1 bg-background px-6 py-4 text-left transition-colors sm:px-8 sm:py-6"
 								onClick={() => setActiveChart(chart)}
 							>
 								<span className="text-muted-foreground text-xs">
 									{chartConfig[chart].label}
 								</span>
-								<span className="text-lg leading-none font-bold sm:text-3xl">
+								<span className="text-lg font-bold leading-none sm:text-3xl">
 									{total[
 										key as keyof typeof total
 									].toLocaleString()}

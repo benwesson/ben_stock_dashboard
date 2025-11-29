@@ -17,7 +17,7 @@
         "gainLoss": "Ganancia/Pérdida"
     },
     "PortfolioChart": {
-        "title":"Bienvenido a la página de inicio",
+        "title":"Visor de cartera",
         "subtitle":"Seleccione una acción para ver su precio"
     },
     "BuyComponent": {

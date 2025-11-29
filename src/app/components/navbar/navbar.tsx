@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import "@/globals.css";
-import styles from "@/components/navbar/navbar.module.css";
 import AuthLink from "@/components/authlink/authlink";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
@@ -25,8 +24,8 @@ export default function Navbar() {
 	}, [isOpen]);
 
 	return (
-		<nav className={styles.container}>
-			<div className={styles.links}>
+		<nav className="sticky top-0 flex flex-row justify-end items-center h-[100px] bg-black">
+			<div className="hidden md:flex md:justify-end md:items-center md:gap-4 md:max-w-[1200px] md:w-full md:px-5 md:mx-auto">
 				<Link
 					className="rounded-md px-3 py-2 text-xl  text-gray-300 hover:bg-white/5 hover:text-white"
 					href="/"
@@ -58,18 +57,17 @@ export default function Navbar() {
 				<AuthLink loginText={t("login")} logoutText={t("logout")} />
 			</div>
 			<div
-				className={`${styles.hamburger} ${isOpen ? styles.change : ""}`}
+				className={"cursor-pointer md:hidden mr-5"}
 				onClick={() => setIsOpen(!isOpen)}
 			>
-				<div className={styles.bar1} />
-				<div className={styles.bar2} />
-				<div className={styles.bar3} />
+				<div className={`h-[5px] w-[35px] bg-white my-[6px] transition-all duration-[250ms] ease-linear ${ isOpen ? "translate-y-[11px] -rotate-45" : ""}`} />
+				<div className={`h-[5px] w-[35px] bg-white my-[6px] transition-all duration-[250ms] ease-linear ${ isOpen ? "opacity-0" : ""}`} />
+				<div className={`h-[5px] w-[35px] bg-white my-[6px] transition-all duration-[250ms] ease-linear ${ isOpen ? "translate-y-[-11px] rotate-45" : ""}`} />
 			</div>
 			<div
-				className={`${styles.dropDown} ${
-					isOpen ? styles.dropDownOpen : ""
+				className={`fixed top-[100px] w-full bg-black text-white flex flex-col items-center justify-center cursor-pointer overflow-hidden transition-[height] duration-[400ms] ${
+					isOpen ? "h-[250px]" : "h-0"
 				}`}
-				style={{ height: isOpen ? "250px" : "0px" }}
 			>
 				<Link
 					className="rounded-md px-3 py-2 text-xl  text-gray-300 hover:bg-white/5 hover:text-white"
