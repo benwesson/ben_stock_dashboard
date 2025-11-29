@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Source_Sans_3 } from "next/font/google";
 import "@/globals.css";
-import styles from "./layout.module.css";
 import Navbar from "@/components/navbar/navbar";
 import AuthProvider from "@/providers/AuthProvider";
 import { NextIntlClientProvider } from "next-intl";
@@ -31,7 +30,7 @@ export default async function RootLayout({
 				<AuthProvider>
 					<NextIntlClientProvider>
 						<Navbar />
-						<div className={styles.container}>
+						<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 							<LanguageSelect value={locale} />
 							{children}
 						</div>
